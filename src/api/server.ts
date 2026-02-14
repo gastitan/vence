@@ -1,6 +1,6 @@
 import express from 'express';
-import { calculateNextDueDate } from '../../app/engine/RuleEngine.js';
-import type { Rule } from '../../app/domain/Rule.js';
+import { calculateNextDueDate } from '../engine/RuleEngine.js';
+import type { Rule } from '../domain/Rule.js';
 
 function formatDateAsISO(date: Date): string {
   return date.toISOString().slice(0, 10);

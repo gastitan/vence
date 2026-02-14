@@ -1,7 +1,19 @@
 {
   "name": "dueflow",
   "version": "1.0.0",
+  "description": "Vence is a mobile app that reminds and *predicts* financial due dates (cards, services, loans, installments) using **rules instead of manually entered dates**.",
+  "homepage": "https://github.com/gastitan/vence#readme",
+  "bugs": {
+    "url": "https://github.com/gastitan/vence/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gastitan/vence.git"
+  },
+  "license": "ISC",
+  "author": "",
   "type": "module",
+  "main": "index.js",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "test": "vitest",
