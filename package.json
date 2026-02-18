@@ -13,16 +13,16 @@
   "license": "ISC",
   "author": "",
   "type": "module",
-  "main": "index.js",
+  "main": "dist/start.js",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
+    "prestart": "npm run build",
     "test": "vitest",
-    "start": "node dist/src/start.js",
-    "dev": "npm run build && npm run start",
-    "stop": "pkill -f 'dist/src/start.js' || true"
+    "start": "node dist/start.js",
+    "dev": "tsx watch src/start.ts",
+    "stop": "pkill -f 'dist/start.js' || true"
   },
   "dependencies": {
-    "date-fns": "^4.1.0",
     "express": "^5.2.1"
   },
   "devDependencies": {
@@ -30,6 +30,7 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^25.2.3",
     "supertest": "^7.2.2",
+    "tsx": "^4.21.0",
     "typescript": "^5.0.0",
     "vitest": "^2.0.0"
   }

@@ -1,11 +1,7 @@
-import { addDays } from 'date-fns';
 import express from 'express';
 import { calculateNextDueDate } from '../engine/RuleEngine.js';
 import type { Rule } from '../domain/Rule.js';
-
-function formatDateAsISO(date: Date): string {
-  return date.toISOString().slice(0, 10);
-}
+import { addDays, formatISODateLocal, parseISODateLocal } from '../utils/dateUtils.js';
 
 const app = express();
 app.use(express.json());
@@ -16,11 +12,11 @@ app.post('/calculate', (req, res) => {
     referenceDate: string;
   };
 
-  const refDate = new Date(referenceDate);
+  const refDate = parseISODateLocal(referenceDate);
   const result = calculateNextDueDate(rule, refDate);
 
   res.json({
-    calculatedDate: formatDateAsISO(result.calculatedDate),
+    calculatedDate: formatISODateLocal(result.calculatedDate),
     isEstimated: result.isEstimated,
     confidence: result.confidence,
   });
@@ -33,7 +29,7 @@ app.post('/preview', (req, res) => {
     months: number;
   };
 
-  let currentRef = new Date(from);
+  let currentRef = parseISODateLocal(from);
   const results: Array<{
     calculatedDate: string;
     isEstimated: boolean;
@@ -43,7 +39,7 @@ app.post('/preview', (req, res) => {
   for (let i = 0; i < months; i++) {
     const result = calculateNextDueDate(rule, currentRef);
     results.push({
-      calculatedDate: formatDateAsISO(result.calculatedDate),
+      calculatedDate: formatISODateLocal(result.calculatedDate),
       isEstimated: result.isEstimated,
       confidence: result.confidence,
     });
