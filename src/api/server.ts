@@ -49,4 +49,53 @@ app.post('/preview', (req, res) => {
   res.json({ results });
 });
 
+app.post('/simulate-card', (req, res) => {
+  const { closingRangeStart, closingRangeEnd, dueOffsetDays, preferredWeekday, from, months } =
+    req.body as {
+      closingRangeStart: number;
+      closingRangeEnd: number;
+      dueOffsetDays: number;
+      preferredWeekday?: number;
+      from: string;
+      months: number;
+    };
+
+  const rule: Rule = {
+    type: 'RANGE',
+    closingRangeStart,
+    closingRangeEnd,
+    dueOffsetDays,
+    ...(preferredWeekday !== undefined && { preferredWeekday }),
+  };
+
+  const cardRule = {
+    closingRangeStart,
+    closingRangeEnd,
+    dueOffsetDays,
+    ...(preferredWeekday !== undefined && { preferredWeekday }),
+  };
+
+  let referenceDate = parseISODateLocal(from);
+  const results: Array<{
+    closingDate: string;
+    dueDate: string;
+    isEstimated: boolean;
+    confidence: number;
+  }> = [];
+
+  for (let i = 0; i < months; i++) {
+    const result = calculateNextDueDate(rule, referenceDate);
+    const closingDate = addDays(result.calculatedDate, -dueOffsetDays);
+    results.push({
+      closingDate: formatISODateLocal(closingDate),
+      dueDate: formatISODateLocal(result.calculatedDate),
+      isEstimated: result.isEstimated,
+      confidence: result.confidence,
+    });
+    referenceDate = addDays(result.calculatedDate, 1);
+  }
+
+  res.json({ cardRule, results });
+});
+
 export { app };
