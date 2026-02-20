@@ -86,3 +86,47 @@ describe('POST /preview', () => {
     expect(dates).toEqual(sorted);
   });
 });
+
+describe('POST /simulate-card', () => {
+  it('returns 3 months of closing/due pairs for range 5-11, offset 8', async () => {
+    const response = await request(app)
+      .post('/simulate-card')
+      .send({
+        closingRangeStart: 5,
+        closingRangeEnd: 11,
+        dueOffsetDays: 8,
+        from: '2025-01-01',
+        months: 3,
+      })
+      .expect(200);
+
+    expect(response.body.cardRule).toEqual({
+      closingRangeStart: 5,
+      closingRangeEnd: 11,
+      dueOffsetDays: 8,
+    });
+    expect(response.body.results).toHaveLength(3);
+    expect(response.body.results).toEqual([
+      {
+        closingDate: '2025-01-05',
+        dueDate: '2025-01-13',
+        isEstimated: false,
+        confidence: 1,
+      },
+      {
+        closingDate: '2025-02-05',
+        dueDate: '2025-02-13',
+        isEstimated: false,
+        confidence: 1,
+      },
+      {
+        closingDate: '2025-03-05',
+        dueDate: '2025-03-13',
+        isEstimated: false,
+        confidence: 1,
+      },
+    ]);
+    const dueDates = response.body.results.map((r: { dueDate: string }) => r.dueDate);
+    expect(dueDates).toEqual([...dueDates].sort());
+  });
+});
