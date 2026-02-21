@@ -59,10 +59,11 @@ export function validateRule(rule: unknown): ValidateRuleResult {
       }
     }
   } else if (type === RuleType.FIXED_DAY) {
-    if (!isNumber(r.dayOfMonth)) {
-      errors.push('dayOfMonth must be a number');
-    } else if (r.dayOfMonth < DAY_MIN || r.dayOfMonth > DAY_MAX) {
-      errors.push('dayOfMonth must be between 1 and 31');
+    const dayVal = r.dayOfMonth ?? r.day;
+    if (!isNumber(dayVal)) {
+      errors.push('dayOfMonth or day must be a number');
+    } else if (dayVal < DAY_MIN || dayVal > DAY_MAX) {
+      errors.push('dayOfMonth/day must be between 1 and 31');
     }
   } else if (type === RuleType.RANGE_DAY) {
     if (!isNumber(r.fromDay)) {

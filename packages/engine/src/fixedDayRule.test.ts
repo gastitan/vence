@@ -35,4 +35,15 @@ describe('calculateNextDueDate with FixedDayRule', () => {
     expect(result.isEstimated).toBe(true);
     expect(result.confidence).toBe(1.0);
   });
+
+  it('accepts day alias (API contract) and returns correct due date', () => {
+    const rule = { type: 'FIXED_DAY', day: 15 } as Rule;
+    const referenceDate = new Date(2025, 0, 10); // January 10, 2025
+
+    const result = calculateNextDueDate({ rule, referenceDate });
+
+    expect(result.calculatedDate).toEqual(new Date(2025, 0, 15)); // January 15, 2025
+    expect(result.isEstimated).toBe(false);
+    expect(result.confidence).toBe(1.0);
+  });
 });

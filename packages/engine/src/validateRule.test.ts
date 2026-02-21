@@ -33,6 +33,12 @@ describe('validateRule', () => {
     expect(result.errors).toHaveLength(0);
   });
 
+  it('returns valid for FIXED_DAY rule with day alias (API contract)', () => {
+    const result = validateRule({ type: 'FIXED_DAY', day: 15 });
+    expect(result.valid).toBe(true);
+    expect(result.errors).toHaveLength(0);
+  });
+
   it('returns invalid for unsupported rule type', () => {
     const result = validateRule({ type: 'UNKNOWN' });
     expect(result.valid).toBe(false);

@@ -20,7 +20,16 @@ describe('POST /api/v1/rules/validate', () => {
     expect(res.body).toEqual({ valid: true });
   });
 
-  it('invalid RangeRule (start > end) returns 400 with errors', async () => {
+  it('valid FIXED_DAY rule with day alias returns 200 and valid true', async () => {
+    const res = await request(app)
+      .post('/api/v1/rules/validate')
+      .send({ rule: { type: 'FIXED_DAY', day: 15 } })
+      .expect(200);
+
+    expect(res.body).toEqual({ valid: true });
+  });
+
+  it('invalid RangeRule (start > end) returns 400 with structured error', async () => {
     const res = await request(app)
       .post('/api/v1/rules/validate')
       .send({
@@ -33,9 +42,14 @@ describe('POST /api/v1/rules/validate', () => {
       })
       .expect(400);
 
-    expect(res.body.valid).toBe(false);
-    expect(Array.isArray(res.body.errors)).toBe(true);
-    expect(res.body.errors).toContain(
+    expect(res.body).toMatchObject({
+      error: {
+        code: 'VALIDATION_ERROR',
+        message: 'Rule validation failed',
+        details: { errors: expect.any(Array) },
+      },
+    });
+    expect(res.body.error.details.errors).toContain(
       'closingRangeStart must be less than or equal to closingRangeEnd'
     );
   });
