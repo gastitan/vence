@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { calculateNextDueDate } from '../engine/RuleEngine.js';
-import { RuleType, type Rule } from '../domain/Rule.js';
-import { createLocalDate, formatISODateLocal, parseISODateLocal } from '../utils/dateUtils.js';
+import { calculateNextDueDate } from './calculateNextDueDate.js';
+import { RuleType, type Rule } from './Rule.js';
 
 describe('calculateNextDueDate with RangeRule', () => {
   it('returns closing date + offset when reference date is before range', () => {
@@ -13,7 +12,7 @@ describe('calculateNextDueDate with RangeRule', () => {
     };
     const referenceDate = new Date(2025, 0, 10); // January 10, 2025
 
-    const result = calculateNextDueDate(rule, referenceDate);
+    const result = calculateNextDueDate({ rule, referenceDate });
 
     // closing = Jan 15, due = Jan 20
     expect(result.calculatedDate).toEqual(new Date(2025, 0, 20));
@@ -30,7 +29,7 @@ describe('calculateNextDueDate with RangeRule', () => {
     };
     const referenceDate = new Date(2025, 0, 15); // January 15, 2025
 
-    const result = calculateNextDueDate(rule, referenceDate);
+    const result = calculateNextDueDate({ rule, referenceDate });
 
     // closing = Jan 15 (ref), due = Jan 18
     expect(result.calculatedDate).toEqual(new Date(2025, 0, 18));
@@ -47,7 +46,7 @@ describe('calculateNextDueDate with RangeRule', () => {
     };
     const referenceDate = new Date(2025, 0, 15); // January 15, 2025 (after range)
 
-    const result = calculateNextDueDate(rule, referenceDate);
+    const result = calculateNextDueDate({ rule, referenceDate });
 
     // closing = Feb 5, due = Feb 13
     expect(result.calculatedDate).toEqual(new Date(2025, 1, 13));
@@ -66,7 +65,7 @@ describe('calculateNextDueDate with RangeRule', () => {
     // Jan 12 (Sun) + 2 = Jan 14 (Tue). Next Wed = Jan 15
     const referenceDate = new Date(2025, 0, 12);
 
-    const result = calculateNextDueDate(rule, referenceDate);
+    const result = calculateNextDueDate({ rule, referenceDate });
 
     expect(result.calculatedDate).toEqual(new Date(2025, 0, 15));
     expect(result.calculatedDate.getDay()).toBe(3);
@@ -81,12 +80,14 @@ describe('calculateNextDueDate with RangeRule', () => {
       closingRangeEnd: 11,
       dueOffsetDays: 8,
     };
-    const referenceDate = parseISODateLocal('2025-01-08');
+    const referenceDate = new Date(2025, 0, 8); // 2025-01-08 local
 
-    const result = calculateNextDueDate(rule, referenceDate);
+    const result = calculateNextDueDate({ rule, referenceDate });
 
-    expect(result.calculatedDate).toEqual(createLocalDate(2025, 0, 16));
-    expect(formatISODateLocal(result.calculatedDate)).toBe('2025-01-16');
+    expect(result.calculatedDate).toEqual(new Date(2025, 0, 16));
+    expect(result.calculatedDate.getFullYear()).toBe(2025);
+    expect(result.calculatedDate.getMonth()).toBe(0);
+    expect(result.calculatedDate.getDate()).toBe(16);
     expect(result.isEstimated).toBe(false);
     expect(result.confidence).toBe(1);
   });
@@ -100,7 +101,7 @@ describe('calculateNextDueDate with RangeRule', () => {
     };
     const referenceDate = new Date(2025, 1, 10); // February 10, 2025
 
-    const result = calculateNextDueDate(rule, referenceDate);
+    const result = calculateNextDueDate({ rule, referenceDate });
 
     // closing = Feb 28 (clamped), due = Feb 28
     expect(result.calculatedDate).toEqual(new Date(2025, 1, 28));

@@ -55,7 +55,7 @@ The rule engine:
 * Provides a confidence score
 
 ```ts
-calculateNextDueDate(rule, referenceDate) → CalculationResult
+calculateNextDueDate({ rule, referenceDate }) → CalculationResult
 ```
 
 All business logic is documented in **RULES.md**.
