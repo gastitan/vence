@@ -2,10 +2,10 @@ import { describe, it, expect } from 'vitest';
 import request from 'supertest';
 import { app } from './server.js';
 
-describe('POST /rules/validate', () => {
+describe('POST /api/v1/rules/validate', () => {
   it('valid RangeRule returns 200 and valid true', async () => {
     const res = await request(app)
-      .post('/rules/validate')
+      .post('/api/v1/rules/validate')
       .send({
         rule: {
           type: 'RANGE',
@@ -22,7 +22,7 @@ describe('POST /rules/validate', () => {
 
   it('invalid RangeRule (start > end) returns 400 with errors', async () => {
     const res = await request(app)
-      .post('/rules/validate')
+      .post('/api/v1/rules/validate')
       .send({
         rule: {
           type: 'RANGE',
@@ -41,9 +41,9 @@ describe('POST /rules/validate', () => {
   });
 });
 
-describe('GET /health', () => {
+describe('GET /api/v1/health', () => {
   it('returns 200 and status ok', async () => {
-    const res = await request(app).get('/health').expect(200);
+    const res = await request(app).get('/api/v1/health').expect(200);
     expect(res.body).toEqual({ status: 'ok' });
   });
 });

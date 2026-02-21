@@ -10,7 +10,7 @@ describe('Cards API integration', () => {
 
   it('creates, lists and deletes a card', async () => {
     const createResponse = await request(app)
-      .post('/cards')
+      .post('/api/v1/cards')
       .send({
         closingRangeStart: 5,
         closingRangeEnd: 11,
@@ -29,7 +29,7 @@ describe('Cards API integration', () => {
 
     const createdId = createResponse.body.id as number;
 
-    const listResponse = await request(app).get('/cards').expect(200);
+    const listResponse = await request(app).get('/api/v1/cards').expect(200);
     expect(Array.isArray(listResponse.body)).toBe(true);
     expect(listResponse.body).toHaveLength(1);
     expect(listResponse.body[0]).toMatchObject({
@@ -40,9 +40,9 @@ describe('Cards API integration', () => {
       preferredWeekday: 1,
     });
 
-    await request(app).delete(`/cards/${createdId}`).expect(200);
+    await request(app).delete(`/api/v1/cards/${createdId}`).expect(200);
 
-    const listAfterDelete = await request(app).get('/cards').expect(200);
+    const listAfterDelete = await request(app).get('/api/v1/cards').expect(200);
     expect(Array.isArray(listAfterDelete.body)).toBe(true);
     expect(listAfterDelete.body).toHaveLength(0);
   });
