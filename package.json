@@ -3,30 +3,28 @@
   "version": "1.0.0",
   "description": "Vence is a mobile app that reminds and *predicts* financial due dates (cards, services, loans, installments) using **rules instead of manually entered dates**.",
   "homepage": "https://github.com/gastitan/vence#readme",
-  "bugs": {
-    "url": "https://github.com/gastitan/vence/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/gastitan/vence.git"
-  },
+  "bugs": { "url": "https://github.com/gastitan/vence/issues" },
+  "repository": { "type": "git", "url": "git+https://github.com/gastitan/vence.git" },
   "license": "ISC",
   "author": "",
   "type": "module",
   "main": "dist/start.js",
+  "workspaces": ["packages/*"],
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "npm run build -w @dueflow/engine && tsc -p tsconfig.build.json",
     "prestart": "npm run build",
-    "test": "vitest",
+    "test": "npm run test -w @dueflow/engine && vitest run",
     "start": "node dist/start.js",
     "dev": "tsx watch src/start.ts",
     "stop": "pkill -f 'dist/start.js' || true"
   },
   "dependencies": {
+    "@dueflow/engine": "file:packages/engine",
     "better-sqlite3": "^12.6.2",
     "express": "^5.2.1"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.0",
     "@types/express": "^5.0.6",
     "@types/jest": "^30.0.0",
     "@types/node": "^25.2.3",

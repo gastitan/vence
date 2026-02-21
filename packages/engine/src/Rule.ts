@@ -1,7 +1,6 @@
 export const RuleType = {
   FIXED_DAY: "FIXED_DAY",
   RANGE: "RANGE",
-  INSTALLMENT: "INSTALLMENT",
   RANGE_DAY: "RANGE_DAY",
 } as const;
 
@@ -27,15 +26,6 @@ export interface RangeRule {
 }
 
 /**
- * Monthly installments on the same day as start; total count of installments.
- */
-export interface InstallmentRule {
-  type: typeof RuleType.INSTALLMENT;
-  startDate: Date;
-  totalInstallments: number;
-}
-
-/**
  * Due date within a day range [fromDay, toDay] in the month.
  * Uses the first valid day of the range; clamped to last day if needed.
  */
@@ -45,4 +35,4 @@ export interface RangeDayRule {
   toDay: number;
 }
 
-export type Rule = FixedDayRule | RangeRule | InstallmentRule | RangeDayRule;
+export type Rule = FixedDayRule | RangeRule | RangeDayRule;

@@ -1,4 +1,4 @@
-import type { Rule } from "./Rule.js";
+import type { Rule } from '@dueflow/engine';
 
 export interface Account {
   id: string;

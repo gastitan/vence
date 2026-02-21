@@ -1,13 +1,11 @@
 import express from 'express';
-import { calculateNextDueDate } from '../engine/RuleEngine.js';
-import { RuleType, type Rule } from '../domain/Rule.js';
+import {
+  calculateNextDueDate,
+  validateRule,
+  type Rule,
+} from '@dueflow/engine';
 import { addDays, formatISODateLocal, parseISODateLocal } from '../utils/dateUtils.js';
 import { createCard, deleteCard, getAllCards } from '../infrastructure/cardRepository.js';
-import {
-  validateRangeRule,
-  validateFixedDayRule,
-  validateRangeDayRule,
-} from './ruleValidator.js';
 
 const app = express();
 app.use(express.json());
@@ -18,28 +16,8 @@ app.get('/health', (_req, res) => {
 
 app.post('/rules/validate', (req, res) => {
   const { rule } = req.body as { rule: unknown };
-  if (!rule || typeof rule !== 'object') {
-    res.status(400).json({
-      valid: false,
-      errors: ['body must contain a rule object'],
-    });
-    return;
-  }
-  const r = rule as Record<string, unknown>;
-  const type = r.type as string | undefined;
-
-  let errors: string[] = [];
-  if (type === RuleType.RANGE) {
-    errors = validateRangeRule(rule);
-  } else if (type === RuleType.FIXED_DAY) {
-    errors = validateFixedDayRule(rule);
-  } else if (type === RuleType.RANGE_DAY) {
-    errors = validateRangeDayRule(rule);
-  } else {
-    errors = ['Unsupported or missing rule type (use RANGE, FIXED_DAY, or RANGE_DAY)'];
-  }
-
-  if (errors.length > 0) {
+  const { valid, errors } = validateRule(rule);
+  if (!valid) {
     res.status(400).json({ valid: false, errors });
     return;
   }
@@ -53,7 +31,7 @@ app.post('/calculate', (req, res) => {
   };
 
   const refDate = parseISODateLocal(referenceDate);
-  const result = calculateNextDueDate(rule, refDate);
+  const result = calculateNextDueDate({ rule, referenceDate: refDate });
 
   res.json({
     calculatedDate: formatISODateLocal(result.calculatedDate),
@@ -77,7 +55,7 @@ app.post('/preview', (req, res) => {
   }> = [];
 
   for (let i = 0; i < months; i++) {
-    const result = calculateNextDueDate(rule, currentRef);
+    const result = calculateNextDueDate({ rule, referenceDate: currentRef });
     results.push({
       calculatedDate: formatISODateLocal(result.calculatedDate),
       isEstimated: result.isEstimated,
@@ -124,7 +102,7 @@ app.post('/simulate-card', (req, res) => {
   }> = [];
 
   for (let i = 0; i < months; i++) {
-    const result = calculateNextDueDate(rule, referenceDate);
+    const result = calculateNextDueDate({ rule, referenceDate });
     const closingDate = addDays(result.calculatedDate, -dueOffsetDays);
     results.push({
       closingDate: formatISODateLocal(closingDate),

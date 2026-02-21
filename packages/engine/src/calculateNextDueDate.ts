@@ -1,12 +1,12 @@
-import type { CalculationResult } from '../domain/CalculationResult.js';
-import { RuleType, type Rule } from '../domain/Rule.js';
+import type { CalculationResult } from './CalculationResult.js';
+import { RuleType, type Rule } from './Rule.js';
 import {
   addDays,
   addMonths,
   setDayOfMonthClamped,
   startOfDay,
   startOfMonth,
-} from '../utils/dateUtils.js';
+} from './dateUtils.js';
 
 type FixedDayLikeRule = {
   type: string;
@@ -32,7 +32,6 @@ function isFixedDayRule(rule: Rule): rule is Rule & FixedDayLikeRule {
   if (!maybe || typeof maybe !== 'object') return false;
   if (typeof maybe.type !== 'string') return false;
   if (typeof maybe.dayOfMonth !== 'number') return false;
-
   return maybe.type === RuleType.FIXED_DAY;
 }
 
@@ -42,7 +41,6 @@ function isRangeDayRule(rule: Rule): rule is Rule & RangeDayLikeRule {
   if (typeof maybe.type !== 'string') return false;
   if (typeof maybe.fromDay !== 'number') return false;
   if (typeof maybe.toDay !== 'number') return false;
-
   return maybe.type === RuleType.RANGE_DAY;
 }
 
@@ -56,10 +54,15 @@ function isRangeRule(rule: Rule): rule is Rule & RangeRuleLike {
   return maybe.type === RuleType.RANGE;
 }
 
-export function calculateNextDueDate(
-  rule: Rule,
-  referenceDate: Date
-): CalculationResult {
+export interface CalculateNextDueDateParams {
+  rule: Rule;
+  referenceDate: Date;
+}
+
+export function calculateNextDueDate({
+  rule,
+  referenceDate,
+}: CalculateNextDueDateParams): CalculationResult {
   if (isFixedDayRule(rule)) {
     return calculateNextDueDateFixedDay(rule, referenceDate);
   }
@@ -69,7 +72,9 @@ export function calculateNextDueDate(
   if (isRangeRule(rule)) {
     return calculateNextDueDateRange(rule, referenceDate);
   }
-  throw new Error(`Unsupported rule type (only ${RuleType.FIXED_DAY}, ${RuleType.RANGE_DAY}, and ${RuleType.RANGE} are implemented).`);
+  throw new Error(
+    `Unsupported rule type (only ${RuleType.FIXED_DAY}, ${RuleType.RANGE_DAY}, and ${RuleType.RANGE} are implemented).`
+  );
 }
 
 function calculateNextDueDateFixedDay(
@@ -83,7 +88,6 @@ function calculateNextDueDateFixedDay(
   if (current.date.getTime() < ref.getTime()) {
     const nextMonthAnchor = addMonths(currentMonthAnchor, 1);
     const next = setDayOfMonthClamped(nextMonthAnchor, rule.dayOfMonth);
-
     return {
       calculatedDate: next.date,
       isEstimated: next.isClamped,
@@ -104,7 +108,6 @@ function calculateNextDueDateRangeDay(
 ): CalculationResult {
   const ref = startOfDay(referenceDate);
   const currentMonthAnchor = startOfMonth(ref);
-  // First valid day of [fromDay, toDay] is fromDay; clamp to month length via existing util
   const current = setDayOfMonthClamped(currentMonthAnchor, rule.fromDay);
 
   if (current.date.getTime() < ref.getTime()) {
