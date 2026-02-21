@@ -3,6 +3,23 @@ import request from 'supertest';
 import { app } from './server.js';
 
 describe('POST /api/v1/calculate', () => {
+  it('returns 400 with structured error for invalid referenceDate', async () => {
+    const res = await request(app)
+      .post('/api/v1/calculate')
+      .send({
+        rule: { type: 'FIXED_DAY', dayOfMonth: 20 },
+        referenceDate: 'not-a-date',
+      })
+      .expect(400);
+    expect(res.body).toMatchObject({
+      error: {
+        code: 'VALIDATION_ERROR',
+        message: 'Invalid date',
+        details: expect.anything(),
+      },
+    });
+  });
+
   it('returns calculated date for FIXED_DAY rule when reference date is before the fixed day', async () => {
     const response = await request(app)
       .post('/api/v1/calculate')
@@ -30,6 +47,22 @@ describe('POST /api/v1/calculate', () => {
 
     expect(response.body).toEqual({
       calculatedDate: '2025-02-05',
+      isEstimated: false,
+      confidence: 1.0,
+    });
+  });
+
+  it('accepts FIXED_DAY with day (API alias) and returns correct date', async () => {
+    const response = await request(app)
+      .post('/api/v1/calculate')
+      .send({
+        rule: { type: 'FIXED_DAY', day: 15 },
+        referenceDate: '2025-01-10',
+      })
+      .expect(200);
+
+    expect(response.body).toEqual({
+      calculatedDate: '2025-01-15',
       isEstimated: false,
       confidence: 1.0,
     });

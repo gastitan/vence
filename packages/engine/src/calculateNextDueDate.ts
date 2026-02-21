@@ -8,9 +8,11 @@ import {
   startOfMonth,
 } from './dateUtils.js';
 
+/** Input may use day (API alias) or dayOfMonth (canonical). */
 type FixedDayLikeRule = {
   type: string;
-  dayOfMonth: number;
+  dayOfMonth?: number;
+  day?: number;
 };
 
 type RangeDayLikeRule = {
@@ -30,9 +32,9 @@ type RangeRuleLike = {
 function isFixedDayRule(rule: Rule): rule is Rule & FixedDayLikeRule {
   const maybe = rule as unknown as Partial<FixedDayLikeRule> | null | undefined;
   if (!maybe || typeof maybe !== 'object') return false;
-  if (typeof maybe.type !== 'string') return false;
-  if (typeof maybe.dayOfMonth !== 'number') return false;
-  return maybe.type === RuleType.FIXED_DAY;
+  if (maybe.type !== RuleType.FIXED_DAY) return false;
+  const dayVal = maybe.dayOfMonth ?? maybe.day;
+  return typeof dayVal === 'number' && Number.isFinite(dayVal);
 }
 
 function isRangeDayRule(rule: Rule): rule is Rule & RangeDayLikeRule {
@@ -77,17 +79,26 @@ export function calculateNextDueDate({
   );
 }
 
+function getFixedDay(rule: Rule & FixedDayLikeRule): number {
+  const day = rule.dayOfMonth ?? rule.day;
+  if (typeof day !== 'number' || !Number.isFinite(day)) {
+    throw new Error('FIXED_DAY rule must have day or dayOfMonth (1–31)');
+  }
+  return day;
+}
+
 function calculateNextDueDateFixedDay(
   rule: Rule & FixedDayLikeRule,
   referenceDate: Date
 ): CalculationResult {
+  const dayOfMonth = getFixedDay(rule);
   const ref = startOfDay(referenceDate);
   const currentMonthAnchor = startOfMonth(ref);
-  const current = setDayOfMonthClamped(currentMonthAnchor, rule.dayOfMonth);
+  const current = setDayOfMonthClamped(currentMonthAnchor, dayOfMonth);
 
   if (current.date.getTime() < ref.getTime()) {
     const nextMonthAnchor = addMonths(currentMonthAnchor, 1);
-    const next = setDayOfMonthClamped(nextMonthAnchor, rule.dayOfMonth);
+    const next = setDayOfMonthClamped(nextMonthAnchor, dayOfMonth);
     return {
       calculatedDate: next.date,
       isEstimated: next.isClamped,

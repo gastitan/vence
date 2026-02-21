@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
 import { createCard, deleteCard, getAllCards } from '../../../infrastructure/cardRepository.js';
+import { ValidationError, NotFoundError } from '../../errors.js';
 
 export function createCardHandler(req: Request, res: Response): void {
   const {
@@ -19,8 +20,9 @@ export function createCardHandler(req: Request, res: Response): void {
     typeof closingRangeEnd !== 'number' ||
     typeof dueOffsetDays !== 'number'
   ) {
-    res.status(400).json({ error: 'Invalid payload' });
-    return;
+    throw new ValidationError('Invalid payload', {
+      expected: 'closingRangeStart, closingRangeEnd, dueOffsetDays as numbers',
+    });
   }
 
   const card = createCard({
@@ -42,10 +44,12 @@ export function deleteCardHandler(req: Request, res: Response): void {
   const id = Number(req.params.id);
 
   if (!Number.isInteger(id) || id <= 0) {
-    res.status(400).json({ error: 'Invalid id' });
-    return;
+    throw new ValidationError('Invalid id', { id: req.params.id });
   }
 
-  deleteCard(id);
+  const deleted = deleteCard(id);
+  if (!deleted) {
+    throw new NotFoundError('Card not found', { id });
+  }
   res.json({ success: true });
 }

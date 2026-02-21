@@ -1,15 +1,37 @@
 import type { Request, Response } from 'express';
-import { calculateNextDueDate, type Rule } from '@dueflow/engine';
+import { calculateNextDueDate, RuleType, type Rule } from '@dueflow/engine';
 import { addDays, formatISODateLocal, parseISODateLocal } from '../../../utils/dateUtils.js';
+import { ValidationError } from '../../errors.js';
+
+function parseAndValidateDate(value: unknown, fieldName: string): Date {
+  if (typeof value !== 'string') {
+    throw new ValidationError('Invalid date', { field: fieldName, expected: 'YYYY-MM-DD string' });
+  }
+  const date = parseISODateLocal(value);
+  if (Number.isNaN(date.getTime())) {
+    throw new ValidationError('Invalid date', { field: fieldName, value });
+  }
+  return date;
+}
+
+function runCalculation<T>(fn: () => T): T {
+  try {
+    return fn();
+  } catch (err) {
+    if (err instanceof Error && /Unsupported rule type|rule type/.test(err.message)) {
+      throw new ValidationError('Invalid or unsupported rule', { reason: err.message });
+    }
+    throw err;
+  }
+}
 
 export function calculateHandler(req: Request, res: Response): void {
   const { rule, referenceDate } = req.body as {
     rule: Rule;
     referenceDate: string;
   };
-
-  const refDate = parseISODateLocal(referenceDate);
-  const result = calculateNextDueDate({ rule, referenceDate: refDate });
+  const refDate = parseAndValidateDate(referenceDate, 'referenceDate');
+  const result = runCalculation(() => calculateNextDueDate({ rule, referenceDate: refDate }));
 
   res.json({
     calculatedDate: formatISODateLocal(result.calculatedDate),
@@ -25,7 +47,7 @@ export function previewHandler(req: Request, res: Response): void {
     months: number;
   };
 
-  let currentRef = parseISODateLocal(from);
+  let currentRef = parseAndValidateDate(from, 'from');
   const results: Array<{
     calculatedDate: string;
     isEstimated: boolean;
@@ -33,7 +55,7 @@ export function previewHandler(req: Request, res: Response): void {
   }> = [];
 
   for (let i = 0; i < months; i++) {
-    const result = calculateNextDueDate({ rule, referenceDate: currentRef });
+    const result = runCalculation(() => calculateNextDueDate({ rule, referenceDate: currentRef }));
     results.push({
       calculatedDate: formatISODateLocal(result.calculatedDate),
       isEstimated: result.isEstimated,
@@ -57,7 +79,7 @@ export function simulateCardHandler(req: Request, res: Response): void {
     };
 
   const rule: Rule = {
-    type: 'RANGE',
+    type: RuleType.RANGE,
     closingRangeStart,
     closingRangeEnd,
     dueOffsetDays,
@@ -71,7 +93,7 @@ export function simulateCardHandler(req: Request, res: Response): void {
     ...(preferredWeekday !== undefined && { preferredWeekday }),
   };
 
-  let referenceDate = parseISODateLocal(from);
+  let referenceDate = parseAndValidateDate(from, 'from');
   const results: Array<{
     closingDate: string;
     dueDate: string;
@@ -80,7 +102,7 @@ export function simulateCardHandler(req: Request, res: Response): void {
   }> = [];
 
   for (let i = 0; i < months; i++) {
-    const result = calculateNextDueDate({ rule, referenceDate });
+    const result = runCalculation(() => calculateNextDueDate({ rule, referenceDate }));
     const closingDate = addDays(result.calculatedDate, -dueOffsetDays);
     results.push({
       closingDate: formatISODateLocal(closingDate),

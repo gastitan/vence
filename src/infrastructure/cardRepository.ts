@@ -64,7 +64,8 @@ export function getAllCards(): CardRecord[] {
   });
 }
 
-export function deleteCard(id: number): void {
-  deleteStmt.run(id);
+export function deleteCard(id: number): boolean {
+  const result = deleteStmt.run(id);
+  return result.changes > 0;
 }
 
