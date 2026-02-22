@@ -14,8 +14,8 @@ describe('POST /api/v1/calculate', () => {
     expect(res.body).toMatchObject({
       error: {
         code: 'VALIDATION_ERROR',
-        message: 'Invalid date',
-        details: expect.anything(),
+        message: 'Invalid request body',
+        details: expect.any(Array),
       },
     });
   });

@@ -1,29 +1,11 @@
 import type { Request, Response } from 'express';
 import { createCard, deleteCard, getAllCards } from '../../../infrastructure/cardRepository.js';
+import type { CreateCardBody } from '../../../validation/index.js';
 import { ValidationError, NotFoundError } from '../../errors.js';
 
 export function createCardHandler(req: Request, res: Response): void {
-  const {
-    closingRangeStart,
-    closingRangeEnd,
-    dueOffsetDays,
-    preferredWeekday,
-  } = req.body as {
-    closingRangeStart: number;
-    closingRangeEnd: number;
-    dueOffsetDays: number;
-    preferredWeekday?: number;
-  };
-
-  if (
-    typeof closingRangeStart !== 'number' ||
-    typeof closingRangeEnd !== 'number' ||
-    typeof dueOffsetDays !== 'number'
-  ) {
-    throw new ValidationError('Invalid payload', {
-      expected: 'closingRangeStart, closingRangeEnd, dueOffsetDays as numbers',
-    });
-  }
+  const { closingRangeStart, closingRangeEnd, dueOffsetDays, preferredWeekday } =
+    req.body as CreateCardBody;
 
   const card = createCard({
     closingRangeStart,

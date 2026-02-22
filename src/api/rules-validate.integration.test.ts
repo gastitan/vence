@@ -45,13 +45,15 @@ describe('POST /api/v1/rules/validate', () => {
     expect(res.body).toMatchObject({
       error: {
         code: 'VALIDATION_ERROR',
-        message: 'Rule validation failed',
-        details: { errors: expect.any(Array) },
+        message: 'Invalid request body',
+        details: expect.any(Array),
       },
     });
-    expect(res.body.error.details.errors).toContain(
-      'closingRangeStart must be less than or equal to closingRangeEnd'
+    const refineMessage = 'closingRangeStart must be less than or equal to closingRangeEnd';
+    const hasRefineError = (res.body.error.details as Array<{ message?: string }>).some(
+      (d) => d.message === refineMessage
     );
+    expect(hasRefineError).toBe(true);
   });
 });
 
