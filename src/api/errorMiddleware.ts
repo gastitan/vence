@@ -5,6 +5,7 @@ import {
   ValidationError,
   isApiError,
 } from './errors.js';
+import { logger } from '../infrastructure/logger.js';
 
 function isProduction(): boolean {
   return (process.env.NODE_ENV ?? 'development') === 'production';
@@ -60,10 +61,16 @@ function toStructuredError(err: unknown): { statusCode: number; body: ReturnType
  */
 export function errorMiddleware(
   err: unknown,
-  _req: Request,
+  req: Request,
   res: Response,
   _next: NextFunction
 ): void {
+  const requestId = req.requestId;
+  logger.error({
+    msg: 'unhandled_error',
+    requestId,
+    err: err instanceof Error ? { message: err.message, name: err.name, stack: err.stack } : err,
+  });
   const { statusCode, body } = toStructuredError(err);
   res.status(statusCode).json(body);
 }

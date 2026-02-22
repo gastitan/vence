@@ -1,10 +1,12 @@
 import express from 'express';
 import { v1Router } from './v1/routes.js';
+import { requestLoggingMiddleware } from './requestLoggingMiddleware.js';
 import { errorMiddleware } from './errorMiddleware.js';
 import { NotFoundError } from './errors.js';
 
 const app = express();
 app.use(express.json());
+app.use(requestLoggingMiddleware);
 
 app.use('/api/v1', v1Router);
 
