@@ -56,27 +56,51 @@ function isRangeRule(rule: Rule): rule is Rule & RangeRuleLike {
   return maybe.type === RuleType.RANGE;
 }
 
+/**
+ * Minimal logger interface for optional structured logging.
+ * Pass a compatible logger (e.g. pino) from the application; engine has no logging dependency.
+ */
+export interface CalculationLogger {
+  info(obj: Record<string, unknown>): void;
+}
+
 export interface CalculateNextDueDateParams {
   rule: Rule;
   referenceDate: Date;
+  /** Optional logger for structured calculation logs (rule type, dates, confidence). */
+  logger?: CalculationLogger;
 }
 
 export function calculateNextDueDate({
   rule,
   referenceDate,
+  logger: log,
 }: CalculateNextDueDateParams): CalculationResult {
+  let result: CalculationResult;
   if (isFixedDayRule(rule)) {
-    return calculateNextDueDateFixedDay(rule, referenceDate);
+    result = calculateNextDueDateFixedDay(rule, referenceDate);
+  } else if (isRangeDayRule(rule)) {
+    result = calculateNextDueDateRangeDay(rule, referenceDate);
+  } else if (isRangeRule(rule)) {
+    result = calculateNextDueDateRange(rule, referenceDate);
+  } else {
+    throw new Error(
+      `Unsupported rule type (only ${RuleType.FIXED_DAY}, ${RuleType.RANGE_DAY}, and ${RuleType.RANGE} are implemented).`
+    );
   }
-  if (isRangeDayRule(rule)) {
-    return calculateNextDueDateRangeDay(rule, referenceDate);
+
+  if (log) {
+    log.info({
+      msg: 'calculateNextDueDate',
+      ruleType: rule.type,
+      referenceDate: referenceDate.toISOString(),
+      calculatedDate: result.calculatedDate.toISOString(),
+      confidence: result.confidence,
+      isEstimated: result.isEstimated,
+    });
   }
-  if (isRangeRule(rule)) {
-    return calculateNextDueDateRange(rule, referenceDate);
-  }
-  throw new Error(
-    `Unsupported rule type (only ${RuleType.FIXED_DAY}, ${RuleType.RANGE_DAY}, and ${RuleType.RANGE} are implemented).`
-  );
+
+  return result;
 }
 
 function getFixedDay(rule: Rule & FixedDayLikeRule): number {

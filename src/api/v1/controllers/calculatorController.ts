@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import { calculateNextDueDate, RuleType, type Rule } from '@dueflow/engine';
 import { addDays, formatISODateLocal, parseISODateLocal } from '../../../utils/dateUtils.js';
 import { ValidationError } from '../../errors.js';
+import { logger } from '../../../infrastructure/logger.js';
 
 function parseAndValidateDate(value: unknown, fieldName: string): Date {
   if (typeof value !== 'string') {
@@ -31,7 +32,9 @@ export function calculateHandler(req: Request, res: Response): void {
     referenceDate: string;
   };
   const refDate = parseAndValidateDate(referenceDate, 'referenceDate');
-  const result = runCalculation(() => calculateNextDueDate({ rule, referenceDate: refDate }));
+  const result = runCalculation(() =>
+    calculateNextDueDate({ rule, referenceDate: refDate, logger })
+  );
 
   res.json({
     calculatedDate: formatISODateLocal(result.calculatedDate),
@@ -55,7 +58,9 @@ export function previewHandler(req: Request, res: Response): void {
   }> = [];
 
   for (let i = 0; i < months; i++) {
-    const result = runCalculation(() => calculateNextDueDate({ rule, referenceDate: currentRef }));
+    const result = runCalculation(() =>
+      calculateNextDueDate({ rule, referenceDate: currentRef, logger })
+    );
     results.push({
       calculatedDate: formatISODateLocal(result.calculatedDate),
       isEstimated: result.isEstimated,
@@ -102,7 +107,9 @@ export function simulateCardHandler(req: Request, res: Response): void {
   }> = [];
 
   for (let i = 0; i < months; i++) {
-    const result = runCalculation(() => calculateNextDueDate({ rule, referenceDate }));
+    const result = runCalculation(() =>
+      calculateNextDueDate({ rule, referenceDate, logger })
+    );
     const closingDate = addDays(result.calculatedDate, -dueOffsetDays);
     results.push({
       closingDate: formatISODateLocal(closingDate),
