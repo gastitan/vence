@@ -4,19 +4,19 @@ const dayOfMonthSchema = z.number().int().min(1).max(31);
 const offsetSchema = z.number().int().min(0).max(60);
 const preferredWeekdaySchema = z.number().int().min(0).max(6);
 
-/** FIXED_DAY: day 1–31; API accepts "day" or "dayOfMonth", output is canonical dayOfMonth. */
+/** FIXED: day 1–31; API accepts "day" or "dayOfMonth", output is canonical dayOfMonth. */
 const FixedDayRuleSchema = z
   .object({
-    type: z.literal('FIXED_DAY'),
+    type: z.literal('FIXED'),
     dayOfMonth: dayOfMonthSchema.optional(),
     day: dayOfMonthSchema.optional(),
   })
   .refine((data) => data.dayOfMonth !== undefined || data.day !== undefined, {
-    message: 'FIXED_DAY must have day or dayOfMonth',
+    message: 'FIXED must have day or dayOfMonth',
     path: ['dayOfMonth'],
   })
-  .transform((data): { type: 'FIXED_DAY'; dayOfMonth: number } => ({
-    type: 'FIXED_DAY',
+  .transform((data): { type: 'FIXED'; dayOfMonth: number } => ({
+    type: 'FIXED',
     dayOfMonth: data.dayOfMonth ?? (data.day as number),
   }));
 

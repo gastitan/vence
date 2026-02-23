@@ -15,12 +15,6 @@ type FixedDayLikeRule = {
   day?: number;
 };
 
-type RangeDayLikeRule = {
-  type: string;
-  fromDay: number;
-  toDay: number;
-};
-
 type RangeRuleLike = {
   type: string;
   closingRangeStart: number;
@@ -32,18 +26,9 @@ type RangeRuleLike = {
 function isFixedDayRule(rule: Rule): rule is Rule & FixedDayLikeRule {
   const maybe = rule as unknown as Partial<FixedDayLikeRule> | null | undefined;
   if (!maybe || typeof maybe !== 'object') return false;
-  if (maybe.type !== RuleType.FIXED_DAY) return false;
+  if (maybe.type !== RuleType.FIXED) return false;
   const dayVal = maybe.dayOfMonth ?? maybe.day;
   return typeof dayVal === 'number' && Number.isFinite(dayVal);
-}
-
-function isRangeDayRule(rule: Rule): rule is Rule & RangeDayLikeRule {
-  const maybe = rule as unknown as Partial<RangeDayLikeRule> | null | undefined;
-  if (!maybe || typeof maybe !== 'object') return false;
-  if (typeof maybe.type !== 'string') return false;
-  if (typeof maybe.fromDay !== 'number') return false;
-  if (typeof maybe.toDay !== 'number') return false;
-  return maybe.type === RuleType.RANGE_DAY;
 }
 
 function isRangeRule(rule: Rule): rule is Rule & RangeRuleLike {
@@ -79,13 +64,11 @@ export function calculateNextDueDate({
   let result: CalculationResult;
   if (isFixedDayRule(rule)) {
     result = calculateNextDueDateFixedDay(rule, referenceDate);
-  } else if (isRangeDayRule(rule)) {
-    result = calculateNextDueDateRangeDay(rule, referenceDate);
   } else if (isRangeRule(rule)) {
     result = calculateNextDueDateRange(rule, referenceDate);
   } else {
     throw new Error(
-      `Unsupported rule type (only ${RuleType.FIXED_DAY}, ${RuleType.RANGE_DAY}, and ${RuleType.RANGE} are implemented).`
+      `Unsupported rule type (only ${RuleType.FIXED} and ${RuleType.RANGE} are implemented).`
     );
   }
 
@@ -106,7 +89,7 @@ export function calculateNextDueDate({
 function getFixedDay(rule: Rule & FixedDayLikeRule): number {
   const day = rule.dayOfMonth ?? rule.day;
   if (typeof day !== 'number' || !Number.isFinite(day)) {
-    throw new Error('FIXED_DAY rule must have day or dayOfMonth (1–31)');
+    throw new Error('FIXED rule must have day or dayOfMonth (1–31)');
   }
   return day;
 }
@@ -134,31 +117,6 @@ function calculateNextDueDateFixedDay(
     calculatedDate: current.date,
     isEstimated: current.isClamped,
     confidence: 1.0,
-  };
-}
-
-function calculateNextDueDateRangeDay(
-  rule: Rule & RangeDayLikeRule,
-  referenceDate: Date
-): CalculationResult {
-  const ref = startOfDay(referenceDate);
-  const currentMonthAnchor = startOfMonth(ref);
-  const current = setDayOfMonthClamped(currentMonthAnchor, rule.fromDay);
-
-  if (current.date.getTime() < ref.getTime()) {
-    const nextMonthAnchor = addMonths(currentMonthAnchor, 1);
-    const next = setDayOfMonthClamped(nextMonthAnchor, rule.fromDay);
-    return {
-      calculatedDate: next.date,
-      isEstimated: true,
-      confidence: 0.6,
-    };
-  }
-
-  return {
-    calculatedDate: current.date,
-    isEstimated: true,
-    confidence: 0.6,
   };
 }
 

@@ -3,15 +3,15 @@ import { RuleSchema } from './ruleSchema.js';
 
 const isoDateString = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Expected YYYY-MM-DD');
 
-export const CalculateBodySchema = z.object({
+export const BaseCalculationRequestSchema = z.object({
   rule: RuleSchema,
   referenceDate: isoDateString,
 });
+
+export const CalculateBodySchema = BaseCalculationRequestSchema;
 export type CalculateBody = z.infer<typeof CalculateBodySchema>;
 
-export const PreviewBodySchema = z.object({
-  rule: RuleSchema,
-  from: isoDateString,
+export const PreviewBodySchema = BaseCalculationRequestSchema.extend({
   months: z.number().int().min(1).max(24),
 });
 export type PreviewBody = z.infer<typeof PreviewBodySchema>;

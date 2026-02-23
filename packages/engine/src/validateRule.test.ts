@@ -27,14 +27,14 @@ describe('validateRule', () => {
     );
   });
 
-  it('returns valid for a well-formed FIXED_DAY rule', () => {
-    const result = validateRule({ type: 'FIXED_DAY', dayOfMonth: 15 });
+  it('returns valid for a well-formed FIXED rule', () => {
+    const result = validateRule({ type: 'FIXED', dayOfMonth: 15 });
     expect(result.valid).toBe(true);
     expect(result.errors).toHaveLength(0);
   });
 
-  it('returns valid for FIXED_DAY rule with day alias (API contract)', () => {
-    const result = validateRule({ type: 'FIXED_DAY', day: 15 });
+  it('returns valid for FIXED rule with day alias (API contract)', () => {
+    const result = validateRule({ type: 'FIXED', day: 15 });
     expect(result.valid).toBe(true);
     expect(result.errors).toHaveLength(0);
   });

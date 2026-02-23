@@ -3,7 +3,6 @@ export {
   type Rule,
   type FixedDayRule,
   type RangeRule,
-  type RangeDayRule,
 } from './Rule.js';
 export type { CalculationResult } from './CalculationResult.js';
 export {
