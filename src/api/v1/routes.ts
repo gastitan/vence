@@ -18,7 +18,12 @@ import {
   RulesValidateBodySchema,
   SimulateCardBodySchema,
   CreateCardBodySchema,
+  CreateAccountBodySchema,
 } from '../../validation/index.js';
+import {
+  createAccountHandler,
+  listAccountsHandler,
+} from './controllers/accountsController.js';
 
 const router = Router();
 
@@ -30,5 +35,8 @@ router.post('/simulate-card', validate(SimulateCardBodySchema), simulateCardHand
 router.post('/cards', validate(CreateCardBodySchema), createCardHandler);
 router.get('/cards', getAllCardsHandler);
 router.delete('/cards/:id', deleteCardHandler);
+
+router.post('/accounts', validate(CreateAccountBodySchema), createAccountHandler);
+router.get('/accounts', listAccountsHandler);
 
 export const v1Router = router;

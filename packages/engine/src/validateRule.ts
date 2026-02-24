@@ -58,31 +58,17 @@ export function validateRule(rule: unknown): ValidateRuleResult {
         errors.push('preferredWeekday must be between 0 and 6');
       }
     }
-  } else if (type === RuleType.FIXED_DAY) {
+  } else if (type === RuleType.FIXED) {
     const dayVal = r.dayOfMonth ?? r.day;
     if (!isNumber(dayVal)) {
       errors.push('dayOfMonth or day must be a number');
     } else if (dayVal < DAY_MIN || dayVal > DAY_MAX) {
       errors.push('dayOfMonth/day must be between 1 and 31');
     }
-  } else if (type === RuleType.RANGE_DAY) {
-    if (!isNumber(r.fromDay)) {
-      errors.push('fromDay must be a number');
-    } else if (r.fromDay < DAY_MIN || r.fromDay > DAY_MAX) {
-      errors.push('fromDay must be between 1 and 31');
-    }
-    if (!isNumber(r.toDay)) {
-      errors.push('toDay must be a number');
-    } else if (r.toDay < DAY_MIN || r.toDay > DAY_MAX) {
-      errors.push('toDay must be between 1 and 31');
-    }
-    if (isNumber(r.fromDay) && isNumber(r.toDay) && r.fromDay > r.toDay) {
-      errors.push('fromDay must be less than or equal to toDay');
-    }
   } else {
     return {
       valid: false,
-      errors: ['Unsupported or missing rule type (use RANGE, FIXED_DAY, or RANGE_DAY)'],
+      errors: ['Unsupported or missing rule type (use RANGE or FIXED)'],
     };
   }
 

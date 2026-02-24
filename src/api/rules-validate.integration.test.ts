@@ -20,10 +20,10 @@ describe('POST /api/v1/rules/validate', () => {
     expect(res.body).toEqual({ valid: true });
   });
 
-  it('valid FIXED_DAY rule with day alias returns 200 and valid true', async () => {
+  it('valid FIXED rule with day alias returns 200 and valid true', async () => {
     const res = await request(app)
       .post('/api/v1/rules/validate')
-      .send({ rule: { type: 'FIXED_DAY', day: 15 } })
+      .send({ rule: { type: 'FIXED', day: 15 } })
       .expect(200);
 
     expect(res.body).toEqual({ valid: true });

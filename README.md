@@ -1,111 +1,73 @@
 # Vence
 
-Vence is a mobile app that reminds and *predicts* financial due dates (cards, services, loans, installments) using **rules instead of manually entered dates**.
+Vence is a financial due-date planning system that helps you track, predict, and organize recurring payments (credit cards, services, loans, installments) using **rules instead of manually entered dates**.
 
 The core idea is simple:
 
-> Users should define *how* something expires, not *when* it expires each month.
+> Define how something expires, not the exact date every month.
 
-Vence is powered by **dueflow**, a small rule engine that calculates upcoming due dates based on explicit rules, observed patterns, and user corrections.
-
----
-
-## ✨ Key Concepts
-
-* **Rules, not dates**: due dates are calculated dynamically
-* **Predictable but honest**: estimated dates are marked as such
-* **User feedback loop**: manual corrections improve confidence
-* **Local-first**: MVP works fully offline
+Vence is powered by **dueflow**, a deterministic rule engine that calculates upcoming due dates based on explicit rules.
 
 ---
 
-## 🧱 Project Structure
+## 🧠 Concept
 
-```
-/app
-  /domain        # Core domain models
-  /rules         # Rule definitions (Fixed, Range, Installments)
-  /engine        # Rule calculation engine
-  /utils         # Date helpers
-  /tests         # Unit tests for rules
-RULES.md         # Business rules (source of truth)
-README.md
-```
+Most reminder apps require you to manually enter exact dates every month.
 
----
+Vence works differently:
 
-## 🧠 Architecture (MVP)
+- You define the rule behind a due date
+- The system calculates future occurrences
+- Estimated dates are clearly flagged
+- Confidence is explicit and transparent
 
-* **Frontend**: React Native + Expo (TypeScript)
-* **Storage**: SQLite (local)
-* **Logic**: Pure rule engine (no side effects)
-* **Notifications**: Local notifications
-
-No backend is required for the MVP.
+This allows predictable, honest, and maintainable financial planning.
 
 ---
 
-## 🧩 Rule Engine
+## 🧩 Architecture
 
-The rule engine:
+Vence follows a **backend-first, client-agnostic architecture**.
 
-* Takes a rule + reference date
-* Returns the next due date
-* Indicates whether the date is estimated
-* Provides a confidence score
+### 1️⃣ dueflow (Engine Layer)
+
+- Pure rule engine
+- Deterministic calculations
+- No side effects
+- No persistence
+- Fully documented in `RULES.md`
 
 ```ts
 calculateNextDueDate({ rule, referenceDate }) → CalculationResult
 ```
 
-All business logic is documented in **RULES.md**.
-
 ---
 
-## 🚀 Roadmap
+## Database (Prisma + SQLite)
 
-### MVP
+The app uses **Prisma ORM** with SQLite by default. The schema is written to stay compatible with PostgreSQL when you switch.
 
-* Fixed day rules
-* Range-based credit card rules
-* Installments
-* Notifications
+### Setup
 
-### v1
+1. **Environment**  
+   Copy `.env.example` to `.env` and set `DATABASE_URL` (default: `file:./dueflow.db`).
 
-* Rule confidence
-* Deviation detection
-* Timeline view
+2. **Generate client**  
+   After changing `prisma/schema.prisma`:
+   ```bash
+   npx prisma generate
+   ```
 
-### v2
+3. **Migrations**  
+   Create and apply migrations:
+   ```bash
+   npx prisma migrate dev --name <migration_name>
+   ```
+   For a fresh database, the first migration will create all tables. Connection URL is read from `prisma.config.ts` (which uses `dotenv`), so ensure `.env` is present when running Prisma CLI.
 
-* Email parsing
-* Automatic rule inference
-* Sync & backup
-
----
-
-## 🧭 Guiding Principles
-
-* Business rules live in markdown, not code comments
-* Code must follow RULES.md strictly
-* Prefer correctness and clarity over cleverness
-
----
-
-## 🛠️ Development
-
-This project is designed to be built with AI-assisted tools (e.g. Cursor).
-
-Before implementing logic:
-
-1. Update RULES.md
-2. Define contracts
-3. Generate implementation
-4. Add tests
-
----
-
-## 📄 License
-
-Private / Personal Project
+4. **Production**  
+   To apply migrations in production (e.g. CI or deploy):
+   ```bash
+   npx prisma migrate deploy
+   ```
+   Ensure `DATABASE_URL` is set in the environment.

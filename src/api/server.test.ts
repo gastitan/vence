@@ -7,7 +7,7 @@ describe('POST /api/v1/calculate', () => {
     const res = await request(app)
       .post('/api/v1/calculate')
       .send({
-        rule: { type: 'FIXED_DAY', dayOfMonth: 20 },
+        rule: { type: 'FIXED', dayOfMonth: 20 },
         referenceDate: 'not-a-date',
       })
       .expect(400);
@@ -20,11 +20,11 @@ describe('POST /api/v1/calculate', () => {
     });
   });
 
-  it('returns calculated date for FIXED_DAY rule when reference date is before the fixed day', async () => {
+  it('returns calculated date for FIXED rule when reference date is before the fixed day', async () => {
     const response = await request(app)
       .post('/api/v1/calculate')
       .send({
-        rule: { type: 'FIXED_DAY', dayOfMonth: 20 },
+        rule: { type: 'FIXED', dayOfMonth: 20 },
         referenceDate: '2025-01-10',
       })
       .expect(200);
@@ -40,7 +40,7 @@ describe('POST /api/v1/calculate', () => {
     const response = await request(app)
       .post('/api/v1/calculate')
       .send({
-        rule: { type: 'FIXED_DAY', dayOfMonth: 5 },
+        rule: { type: 'FIXED', dayOfMonth: 5 },
         referenceDate: '2025-01-10',
       })
       .expect(200);
@@ -52,11 +52,11 @@ describe('POST /api/v1/calculate', () => {
     });
   });
 
-  it('accepts FIXED_DAY with day (API alias) and returns correct date', async () => {
+  it('accepts FIXED with day (API alias) and returns correct date', async () => {
     const response = await request(app)
       .post('/api/v1/calculate')
       .send({
-        rule: { type: 'FIXED_DAY', day: 15 },
+        rule: { type: 'FIXED', day: 15 },
         referenceDate: '2025-01-10',
       })
       .expect(200);
@@ -70,12 +70,12 @@ describe('POST /api/v1/calculate', () => {
 });
 
 describe('POST /api/v1/preview', () => {
-  it('returns next 3 due dates for FIXED_DAY rule (day 20) starting from 2025-01-01', async () => {
+  it('returns next 3 due dates for FIXED rule (day 20) starting from 2025-01-01', async () => {
     const response = await request(app)
       .post('/api/v1/preview')
       .send({
-        rule: { type: 'FIXED_DAY', dayOfMonth: 20 },
-        from: '2025-01-01',
+        rule: { type: 'FIXED', dayOfMonth: 20 },
+        referenceDate: '2025-01-01',
         months: 3,
       })
       .expect(200);
@@ -95,8 +95,8 @@ describe('POST /api/v1/preview', () => {
     const response = await request(app)
       .post('/api/v1/preview')
       .send({
-        rule: { type: 'FIXED_DAY', dayOfMonth: 31 },
-        from: '2025-02-15',
+        rule: { type: 'FIXED', dayOfMonth: 31 },
+        referenceDate: '2025-02-15',
         months: 3,
       })
       .expect(200);

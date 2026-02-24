@@ -39,8 +39,8 @@ export function calculateHandler(req: Request, res: Response): void {
 }
 
 export function previewHandler(req: Request, res: Response): void {
-  const { rule, from, months } = req.body as PreviewBody;
-  let currentRef = parseDate(from, 'from');
+  const { rule, referenceDate, months } = req.body as PreviewBody;
+  let currentRef = parseDate(referenceDate, 'referenceDate');
   const results: Array<{
     calculatedDate: string;
     isEstimated: boolean;

@@ -1,17 +1,24 @@
 import { z } from 'zod';
 import { RuleSchema } from './ruleSchema.js';
+import { ACCOUNT_TYPES } from '../domain/Account.js';
+
+export const CreateAccountBodySchema = z.object({
+  name: z.string().min(1, 'Name is required').max(255),
+  type: z.enum(ACCOUNT_TYPES),
+});
+export type CreateAccountBody = z.infer<typeof CreateAccountBodySchema>;
 
 const isoDateString = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Expected YYYY-MM-DD');
 
-export const CalculateBodySchema = z.object({
+export const BaseCalculationRequestSchema = z.object({
   rule: RuleSchema,
   referenceDate: isoDateString,
 });
+
+export const CalculateBodySchema = BaseCalculationRequestSchema;
 export type CalculateBody = z.infer<typeof CalculateBodySchema>;
 
-export const PreviewBodySchema = z.object({
-  rule: RuleSchema,
-  from: isoDateString,
+export const PreviewBodySchema = BaseCalculationRequestSchema.extend({
   months: z.number().int().min(1).max(24),
 });
 export type PreviewBody = z.infer<typeof PreviewBodySchema>;

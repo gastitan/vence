@@ -1,7 +1,6 @@
 export const RuleType = {
-  FIXED_DAY: "FIXED_DAY",
+  FIXED: "FIXED",
   RANGE: "RANGE",
-  RANGE_DAY: "RANGE_DAY",
 } as const;
 
 export type RuleType = (typeof RuleType)[keyof typeof RuleType];
@@ -10,7 +9,7 @@ export type RuleType = (typeof RuleType)[keyof typeof RuleType];
  * Fixed day every month. Day 1–31; if missing in a month, last day is used (estimated).
  */
 export interface FixedDayRule {
-  type: typeof RuleType.FIXED_DAY;
+  type: typeof RuleType.FIXED;
   dayOfMonth: number;
 }
 
@@ -25,14 +24,4 @@ export interface RangeRule {
   preferredWeekday?: number;
 }
 
-/**
- * Due date within a day range [fromDay, toDay] in the month.
- * Uses the first valid day of the range; clamped to last day if needed.
- */
-export interface RangeDayRule {
-  type: typeof RuleType.RANGE_DAY;
-  fromDay: number;
-  toDay: number;
-}
-
-export type Rule = FixedDayRule | RangeRule | RangeDayRule;
+export type Rule = FixedDayRule | RangeRule;
