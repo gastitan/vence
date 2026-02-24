@@ -1,11 +1,13 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import request from 'supertest';
 import { app } from './server.js';
-import { db } from '../infrastructure/db.js';
+import { prisma } from '../infrastructure/prisma/client.js';
 
 describe('Cards API integration', () => {
-  beforeEach(() => {
-    db.exec('DELETE FROM cards');
+  beforeEach(async () => {
+    await prisma.bill.deleteMany({});
+    await prisma.rule.deleteMany({});
+    await prisma.account.deleteMany({ where: { type: 'CREDIT' } });
   });
 
   it('create with invalid payload returns 400 with structured error', async () => {
@@ -36,13 +38,14 @@ describe('Cards API integration', () => {
   });
 
   it('delete non-existent card returns 404 with structured error', async () => {
-    const res = await request(app).delete('/api/v1/cards/99999').expect(404);
+    const nonExistentId = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';
+    const res = await request(app).delete(`/api/v1/cards/${nonExistentId}`).expect(404);
 
     expect(res.body).toMatchObject({
       error: {
         code: 'NOT_FOUND',
         message: 'Card not found',
-        details: { id: 99999 },
+        details: { id: nonExistentId },
       },
     });
   });
@@ -59,14 +62,17 @@ describe('Cards API integration', () => {
       .expect(201);
 
     expect(createResponse.body).toMatchObject({
-      id: expect.any(Number),
+      id: expect.any(String),
       closingRangeStart: 5,
       closingRangeEnd: 11,
       dueOffsetDays: 8,
       preferredWeekday: 1,
     });
+    expect(createResponse.body.id).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+    );
 
-    const createdId = createResponse.body.id as number;
+    const createdId = createResponse.body.id as string;
 
     const listResponse = await request(app).get('/api/v1/cards').expect(200);
     expect(Array.isArray(listResponse.body)).toBe(true);

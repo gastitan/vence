@@ -1,13 +1,16 @@
 import type { Request, Response } from 'express';
-import { createCard, deleteCard, getAllCards } from '../../../infrastructure/cardRepository.js';
+import * as cardService from '../../../services/card.service.js';
 import type { CreateCardBody } from '../../../validation/index.js';
 import { ValidationError, NotFoundError } from '../../errors.js';
 
-export function createCardHandler(req: Request, res: Response): void {
+const UUID_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+export async function createCardHandler(req: Request, res: Response): Promise<void> {
   const { closingRangeStart, closingRangeEnd, dueOffsetDays, preferredWeekday } =
     req.body as CreateCardBody;
 
-  const card = createCard({
+  const card = await cardService.createCard({
     closingRangeStart,
     closingRangeEnd,
     dueOffsetDays,
@@ -17,19 +20,19 @@ export function createCardHandler(req: Request, res: Response): void {
   res.status(201).json(card);
 }
 
-export function getAllCardsHandler(_req: Request, res: Response): void {
-  const cards = getAllCards();
+export async function getAllCardsHandler(_req: Request, res: Response): Promise<void> {
+  const cards = await cardService.listCards();
   res.json(cards);
 }
 
-export function deleteCardHandler(req: Request, res: Response): void {
-  const id = Number(req.params.id);
+export async function deleteCardHandler(req: Request, res: Response): Promise<void> {
+  const id = req.params.id as string;
 
-  if (!Number.isInteger(id) || id <= 0) {
-    throw new ValidationError('Invalid id', { id: req.params.id });
+  if (!id || !UUID_REGEX.test(id)) {
+    throw new ValidationError('Invalid id', { id });
   }
 
-  const deleted = deleteCard(id);
+  const deleted = await cardService.deleteCard(id);
   if (!deleted) {
     throw new NotFoundError('Card not found', { id });
   }

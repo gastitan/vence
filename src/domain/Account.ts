@@ -1,8 +1,19 @@
-import type { Rule } from '@dueflow/engine';
+/**
+ * Domain Account entity. Kept isolated from Prisma/DB types.
+ */
+
+export const ACCOUNT_TYPES = ['BANK', 'CREDIT', 'SERVICE', 'OTHER'] as const;
+export type AccountType = (typeof ACCOUNT_TYPES)[number];
 
 export interface Account {
   id: string;
   name: string;
-  rule: Rule;
-  metadata?: Record<string, unknown>;
+  type: AccountType;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CreateAccountInput {
+  name: string;
+  type: AccountType;
 }

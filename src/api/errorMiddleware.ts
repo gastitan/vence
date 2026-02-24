@@ -3,9 +3,12 @@ import {
   ApiError,
   InternalServerError,
   ValidationError,
+  NotFoundError,
+  ConflictError,
   isApiError,
 } from './errors.js';
 import { logger } from '../infrastructure/logger.js';
+import { Prisma } from '../generated/prisma/client.js';
 
 function isProduction(): boolean {
   return (process.env.NODE_ENV ?? 'development') === 'production';
@@ -25,6 +28,10 @@ function isZodError(err: unknown): err is { name: 'ZodError'; errors: unknown } 
   );
 }
 
+function isPrismaKnownError(err: unknown): err is Prisma.PrismaClientKnownRequestError {
+  return err instanceof Prisma.PrismaClientKnownRequestError;
+}
+
 function toStructuredError(err: unknown): { statusCode: number; body: ReturnType<ApiError['toResponseBody']> } {
   if (isApiError(err)) {
     return {
@@ -39,6 +46,17 @@ function toStructuredError(err: unknown): { statusCode: number; body: ReturnType
       statusCode: validation.statusCode,
       body: validation.toResponseBody(),
     };
+  }
+
+  if (isPrismaKnownError(err)) {
+    if (err.code === 'P2025') {
+      const notFound = new NotFoundError('Record not found', { code: err.code });
+      return { statusCode: notFound.statusCode, body: notFound.toResponseBody() };
+    }
+    if (err.code === 'P2002') {
+      const conflict = new ConflictError('A record with this value already exists', { code: err.code, target: err.meta?.target });
+      return { statusCode: conflict.statusCode, body: conflict.toResponseBody() };
+    }
   }
 
   const prod = isProduction();
