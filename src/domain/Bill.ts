@@ -6,6 +6,7 @@ export interface Bill {
   id: string;
   accountId: string;
   ruleId: string;
+  amount: number | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -13,4 +14,5 @@ export interface Bill {
 export interface CreateBillInput {
   accountId: string;
   ruleId: string;
+  amount?: number | null;
 }

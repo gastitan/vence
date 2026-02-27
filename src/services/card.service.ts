@@ -4,6 +4,7 @@
  */
 import * as accountRepository from '../infrastructure/repositories/account.repository.js';
 import * as ruleRepository from '../infrastructure/repositories/rule.repository.js';
+import * as billService from './bill.service.js';
 import * as billRepository from '../infrastructure/repositories/bill.repository.js';
 import type { CreateCardInput } from '../domain/Card.js';
 
@@ -41,7 +42,7 @@ export async function createCard(data: CreateCardInput): Promise<CardDto> {
       ...(data.preferredWeekday !== undefined && { preferredWeekday: data.preferredWeekday }),
     },
   });
-  const bill = await billRepository.create({
+  const bill = await billService.createBill({
     accountId: account.id,
     ruleId: rule.id,
   });

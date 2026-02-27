@@ -35,3 +35,7 @@ coverage/
 # Cache
 .cache/
 .eslintcache
+
+# SQLite DBs (dev and test)
+dueflow.db
+test.db

@@ -53,7 +53,8 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   Account: 'Account',
   Rule: 'Rule',
-  Bill: 'Bill'
+  Bill: 'Bill',
+  DueInstance: 'DueInstance'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -95,11 +96,26 @@ export const BillScalarFieldEnum = {
   id: 'id',
   accountId: 'accountId',
   ruleId: 'ruleId',
+  amount: 'amount',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type BillScalarFieldEnum = (typeof BillScalarFieldEnum)[keyof typeof BillScalarFieldEnum]
+
+
+export const DueInstanceScalarFieldEnum = {
+  id: 'id',
+  billId: 'billId',
+  dueDate: 'dueDate',
+  estimatedAmount: 'estimatedAmount',
+  confirmedAmount: 'confirmedAmount',
+  status: 'status',
+  paidAt: 'paidAt',
+  createdAt: 'createdAt'
+} as const
+
+export type DueInstanceScalarFieldEnum = (typeof DueInstanceScalarFieldEnum)[keyof typeof DueInstanceScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -132,4 +148,12 @@ export const QueryMode = {
 } as const
 
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 

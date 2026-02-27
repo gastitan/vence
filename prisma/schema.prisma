@@ -22,6 +22,11 @@ enum RuleType {
   RANGE
 }
 
+enum DueStatus {
+  PENDING
+  PAID
+}
+
 model Account {
   id        String   @id @default(uuid())
   name      String
@@ -44,10 +49,29 @@ model Bill {
   id        String   @id @default(uuid())
   accountId String
   ruleId    String
-  account   Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  rule      Rule     @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+  amount    Float?
+  account   Account       @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  rule      Rule          @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+  dueInstances DueInstance[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@unique([accountId, ruleId])
+}
+
+model DueInstance {
+  id               String    @id @default(uuid())
+  billId           String
+  dueDate          DateTime
+  estimatedAmount  Float?
+  confirmedAmount  Float?
+  status           DueStatus @default(PENDING)
+  paidAt           DateTime?
+  createdAt        DateTime  @default(now())
+  bill             Bill      @relation(fields: [billId], references: [id], onDelete: Cascade)
+
+  @@unique([billId, dueDate])
+  @@index([billId])
+  @@index([dueDate])
+  @@index([status])
 }

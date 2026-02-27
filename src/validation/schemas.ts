@@ -10,6 +10,17 @@ export type CreateAccountBody = z.infer<typeof CreateAccountBodySchema>;
 
 const isoDateString = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Expected YYYY-MM-DD');
 
+export const DueInstancesQuerySchema = z.object({
+  from: isoDateString,
+  to: isoDateString,
+});
+export type DueInstancesQuery = z.infer<typeof DueInstancesQuerySchema>;
+
+export const PayDueInstanceBodySchema = z.object({
+  confirmedAmount: z.number().finite().optional(),
+});
+export type PayDueInstanceBody = z.infer<typeof PayDueInstanceBodySchema>;
+
 export const BaseCalculationRequestSchema = z.object({
   rule: RuleSchema,
   referenceDate: isoDateString,
