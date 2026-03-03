@@ -71,3 +71,13 @@ The app uses **Prisma ORM** with SQLite by default. The schema is written to sta
    npx prisma migrate deploy
    ```
    Ensure `DATABASE_URL` is set in the environment.
+
+5. **DueInstance migration (Phase 2.5)**  
+   Migration `20260224120000_add_due_instance_and_bill_amount` adds the `DueInstance` model and an optional `amount` column on `Bill`. Apply it with:
+   ```bash
+   npx prisma migrate deploy
+   ```
+   If you see "Drift detected" (e.g. DB has tables not in migration history), either fix the DB to match migrations or run `npx prisma migrate reset` (drops all data) then re-apply.
+
+6. **Test database**  
+   Tests use a separate SQLite DB: `file:./test.db`. Run tests with `npm test`; the test script applies migrations to `test.db` then runs Vitest, so the schema is always in sync. Do not mix dev (`dueflow.db`) and test (`test.db`) databases.

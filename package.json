@@ -20,7 +20,8 @@
   "scripts": {
     "build": "npm run build -w @dueflow/engine && tsc -p tsconfig.build.json",
     "prestart": "npm run build",
-    "test": "npm run test -w @dueflow/engine && vitest run",
+    "test": "npm run test -w @dueflow/engine && node scripts/test-with-db.mjs",
+    "test:vitest": "vitest run",
     "start": "node dist/start.js",
     "dev": "tsx watch src/start.ts",
     "stop": "pkill -f 'dist/start.js' || true"

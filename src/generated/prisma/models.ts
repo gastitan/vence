@@ -11,4 +11,5 @@
 export type * from './models/Account.js'
 export type * from './models/Rule.js'
 export type * from './models/Bill.js'
+export type * from './models/DueInstance.js'
 export type * from './commonInputTypes.js'

@@ -386,7 +386,8 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 export const ModelName = {
   Account: 'Account',
   Rule: 'Rule',
-  Bill: 'Bill'
+  Bill: 'Bill',
+  DueInstance: 'DueInstance'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -402,7 +403,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "account" | "rule" | "bill"
+    modelProps: "account" | "rule" | "bill" | "dueInstance"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -628,6 +629,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    DueInstance: {
+      payload: Prisma.$DueInstancePayload<ExtArgs>
+      fields: Prisma.DueInstanceFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.DueInstanceFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DueInstancePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.DueInstanceFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DueInstancePayload>
+        }
+        findFirst: {
+          args: Prisma.DueInstanceFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DueInstancePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.DueInstanceFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DueInstancePayload>
+        }
+        findMany: {
+          args: Prisma.DueInstanceFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DueInstancePayload>[]
+        }
+        create: {
+          args: Prisma.DueInstanceCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DueInstancePayload>
+        }
+        createMany: {
+          args: Prisma.DueInstanceCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.DueInstanceCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DueInstancePayload>[]
+        }
+        delete: {
+          args: Prisma.DueInstanceDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DueInstancePayload>
+        }
+        update: {
+          args: Prisma.DueInstanceUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DueInstancePayload>
+        }
+        deleteMany: {
+          args: Prisma.DueInstanceDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.DueInstanceUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.DueInstanceUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DueInstancePayload>[]
+        }
+        upsert: {
+          args: Prisma.DueInstanceUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DueInstancePayload>
+        }
+        aggregate: {
+          args: Prisma.DueInstanceAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDueInstance>
+        }
+        groupBy: {
+          args: Prisma.DueInstanceGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DueInstanceGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.DueInstanceCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DueInstanceCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -690,11 +765,29 @@ export const BillScalarFieldEnum = {
   id: 'id',
   accountId: 'accountId',
   ruleId: 'ruleId',
+  name: 'name',
+  amount: 'amount',
+  currency: 'currency',
+  deletedAt: 'deletedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type BillScalarFieldEnum = (typeof BillScalarFieldEnum)[keyof typeof BillScalarFieldEnum]
+
+
+export const DueInstanceScalarFieldEnum = {
+  id: 'id',
+  billId: 'billId',
+  dueDate: 'dueDate',
+  estimatedAmount: 'estimatedAmount',
+  confirmedAmount: 'confirmedAmount',
+  status: 'status',
+  paidAt: 'paidAt',
+  createdAt: 'createdAt'
+} as const
+
+export type DueInstanceScalarFieldEnum = (typeof DueInstanceScalarFieldEnum)[keyof typeof DueInstanceScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -727,6 +820,14 @@ export const QueryMode = {
 } as const
 
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
 
@@ -774,6 +875,20 @@ export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'J
  * Reference to a field of type 'QueryMode'
  */
 export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+/**
+ * Reference to a field of type 'Float'
+ */
+export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+/**
+ * Reference to a field of type 'DueStatus'
+ */
+export type EnumDueStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DueStatus'>
     
 
 
@@ -881,6 +996,7 @@ export type GlobalOmitConfig = {
   account?: Prisma.AccountOmit
   rule?: Prisma.RuleOmit
   bill?: Prisma.BillOmit
+  dueInstance?: Prisma.DueInstanceOmit
 }
 
 /* Types for Logging */

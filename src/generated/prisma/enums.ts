@@ -25,3 +25,11 @@ export const RuleType = {
 } as const
 
 export type RuleType = (typeof RuleType)[keyof typeof RuleType]
+
+
+export const DueStatus = {
+  PENDING: 'PENDING',
+  PAID: 'PAID'
+} as const
+
+export type DueStatus = (typeof DueStatus)[keyof typeof DueStatus]

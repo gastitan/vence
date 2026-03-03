@@ -32,3 +32,8 @@ export type Rule = Prisma.RuleModel
  * 
  */
 export type Bill = Prisma.BillModel
+/**
+ * Model DueInstance
+ * 
+ */
+export type DueInstance = Prisma.DueInstanceModel

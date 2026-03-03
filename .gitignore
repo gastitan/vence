@@ -35,3 +35,11 @@ coverage/
 # Cache
 .cache/
 .eslintcache
+
+# SQLite databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Local data
+/data/

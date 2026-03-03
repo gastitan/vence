@@ -6,6 +6,10 @@ export interface Bill {
   id: string;
   accountId: string;
   ruleId: string;
+  name: string;
+  amount: number | null;
+  currency: string;
+  deletedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -13,4 +17,7 @@ export interface Bill {
 export interface CreateBillInput {
   accountId: string;
   ruleId: string;
+  name: string;
+  amount?: number | null;
+  currency?: string; // defaults to 'USD' in repository
 }
