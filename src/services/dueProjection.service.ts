@@ -22,6 +22,8 @@ import type { TransactionContext } from '../infrastructure/transaction.js';
 export interface GenerateFutureInstancesOptions {
   /** If set, used as "now" for coverage window (today and targetEnd). Enables deterministic tests. */
   referenceNow?: Date;
+  /** If set, used as estimatedAmount for created instances (e.g. when bill was just created in same tx). */
+  overrideEstimatedAmount?: number;
 }
 
 function toEngineRule(
@@ -61,11 +63,12 @@ export async function generateFutureInstances(
   tx?: TransactionContext,
   options?: GenerateFutureInstancesOptions
 ): Promise<number> {
-  const composite = await billRepository.findByIdWithAccountAndRule(billId);
+  const composite = await billRepository.findByIdWithAccountAndRule(billId, tx);
   if (!composite) throw new Error(`Bill not found: ${billId}`);
 
   const engineRule = toEngineRule(composite.rule.type, composite.rule.config);
-  const estimatedAmount = composite.bill.amount ?? null;
+  const estimatedAmount =
+    options?.overrideEstimatedAmount ?? composite.bill.amount ?? null;
 
   const now = options?.referenceNow ?? new Date();
   const today = startOfDay(now);

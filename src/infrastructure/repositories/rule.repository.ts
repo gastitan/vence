@@ -3,7 +3,8 @@
  * Maps between domain types and Prisma. No Express or HTTP here.
  */
 import type { Rule, CreateRuleInput } from '../../domain/Rule.js';
-import { prisma } from '../prisma/client.js';
+import { getPrismaClient } from '../transaction.js';
+import type { TransactionContext } from '../transaction.js';
 import type { RuleType as PrismaRuleType } from '../../generated/prisma/enums.js';
 
 function toDomain(row: {
@@ -26,8 +27,12 @@ function toPrismaType(type: CreateRuleInput['type']): PrismaRuleType {
   return type as PrismaRuleType;
 }
 
-export async function create(data: CreateRuleInput): Promise<Rule> {
-  const row = await prisma.rule.create({
+export async function create(
+  data: CreateRuleInput,
+  tx?: TransactionContext
+): Promise<Rule> {
+  const client = getPrismaClient(tx);
+  const row = await client.rule.create({
     data: {
       type: toPrismaType(data.type),
       config: data.config as object,
@@ -37,15 +42,17 @@ export async function create(data: CreateRuleInput): Promise<Rule> {
 }
 
 export async function findById(id: string): Promise<Rule | null> {
-  const row = await prisma.rule.findUnique({
+  const client = getPrismaClient(undefined);
+  const row = await client.rule.findUnique({
     where: { id },
   });
   return row ? toDomain(row) : null;
 }
 
 export async function deleteById(id: string): Promise<boolean> {
+  const client = getPrismaClient(undefined);
   try {
-    await prisma.rule.delete({
+    await client.rule.delete({
       where: { id },
     });
     return true;

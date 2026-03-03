@@ -45,6 +45,8 @@ export async function createCard(data: CreateCardInput): Promise<CardDto> {
   const bill = await billService.createBill({
     accountId: account.id,
     ruleId: rule.id,
+    name: 'Credit card',
+    currency: 'USD',
   });
   return ruleConfigToCardDto(bill.id, rule.config);
 }

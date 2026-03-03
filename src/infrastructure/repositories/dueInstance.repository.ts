@@ -152,3 +152,33 @@ export async function findById(
   });
   return row ? toDomain(row) : null;
 }
+
+export async function findFirstPendingByBillId(
+  billId: string
+): Promise<DueInstance | null> {
+  const client = getPrismaClient(undefined);
+  const row = await client.dueInstance.findFirst({
+    where: { billId, status: PrismaDueStatus.PENDING },
+    orderBy: { dueDate: 'asc' },
+  });
+  return row ? toDomain(row) : null;
+}
+
+export async function findPendingByBillId(
+  billId: string
+): Promise<DueInstance[]> {
+  const client = getPrismaClient(undefined);
+  const rows = await client.dueInstance.findMany({
+    where: { billId, status: PrismaDueStatus.PENDING },
+    orderBy: { dueDate: 'asc' },
+  });
+  return rows.map(toDomain);
+}
+
+export async function sumPendingAmountByBillId(billId: string): Promise<number> {
+  const instances = await findPendingByBillId(billId);
+  return instances.reduce(
+    (sum, i) => sum + (i.estimatedAmount ?? 0),
+    0
+  );
+}

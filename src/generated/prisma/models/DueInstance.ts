@@ -485,10 +485,6 @@ export type EnumDueStatusFieldUpdateOperationsInput = {
   set?: $Enums.DueStatus
 }
 
-export type NullableDateTimeFieldUpdateOperationsInput = {
-  set?: Date | string | null
-}
-
 export type DueInstanceCreateWithoutBillInput = {
   id?: string
   dueDate: Date | string

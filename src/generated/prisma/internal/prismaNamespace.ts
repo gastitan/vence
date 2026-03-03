@@ -765,7 +765,10 @@ export const BillScalarFieldEnum = {
   id: 'id',
   accountId: 'accountId',
   ruleId: 'ruleId',
+  name: 'name',
   amount: 'amount',
+  currency: 'currency',
+  deletedAt: 'deletedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

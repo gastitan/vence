@@ -39,6 +39,8 @@ describe('DueProjectionService', () => {
       const bill = await billRepository.create({
         accountId: account.id,
         ruleId: rule.id,
+        name: 'Test bill',
+        currency: 'USD',
       });
 
       const now = createLocalDate(2025, 0, 10);
@@ -80,6 +82,8 @@ describe('DueProjectionService', () => {
       const bill = await billRepository.create({
         accountId: account.id,
         ruleId: rule.id,
+        name: 'Test bill',
+        currency: 'USD',
       });
 
       const now = createLocalDate(2025, 2, 1);
@@ -121,6 +125,8 @@ describe('DueProjectionService', () => {
       const bill = await billRepository.create({
         accountId: account.id,
         ruleId: rule.id,
+        name: 'Test bill',
+        currency: 'USD',
       });
 
       const now = createLocalDate(2025, 0, 1);
@@ -154,6 +160,8 @@ describe('DueProjectionService', () => {
       const bill = await billRepository.create({
         accountId: account.id,
         ruleId: rule.id,
+        name: 'Test bill',
+        currency: 'USD',
       });
 
       const now = createLocalDate(2025, 10, 15);
@@ -191,6 +199,8 @@ describe('DueProjectionService', () => {
       const bill = await billRepository.create({
         accountId: account.id,
         ruleId: rule.id,
+        name: 'Test bill',
+        currency: 'USD',
       });
 
       const now = createLocalDate(2025, 0, 1);

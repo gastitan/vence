@@ -19,12 +19,19 @@ import {
   SimulateCardBodySchema,
   CreateCardBodySchema,
   CreateAccountBodySchema,
+  CreateBillBodySchema,
   PayDueInstanceBodySchema,
 } from '../../validation/index.js';
 import {
   createAccountHandler,
   listAccountsHandler,
 } from './controllers/accountsController.js';
+import {
+  createBillHandler,
+  listBillsHandler,
+  getBillHandler,
+  deleteBillHandler,
+} from './controllers/billController.js';
 import {
   getNextPendingHandler,
   getBetweenDatesHandler,
@@ -44,6 +51,11 @@ router.delete('/cards/:id', deleteCardHandler);
 
 router.post('/accounts', validate(CreateAccountBodySchema), createAccountHandler);
 router.get('/accounts', listAccountsHandler);
+
+router.post('/bills', validate(CreateBillBodySchema), createBillHandler);
+router.get('/bills', listBillsHandler);
+router.get('/bills/:id', getBillHandler);
+router.delete('/bills/:id', deleteBillHandler);
 
 router.get('/due-instances/next', getNextPendingHandler);
 router.get('/due-instances', getBetweenDatesHandler);

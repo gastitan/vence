@@ -6,6 +6,8 @@ export {
   SimulateCardBodySchema,
   CreateCardBodySchema,
   CreateAccountBodySchema,
+  CreateBillBodySchema,
+  CreateBillRuleSchema,
   DueInstancesQuerySchema,
   PayDueInstanceBodySchema,
   type CalculateBody,
@@ -14,6 +16,8 @@ export {
   type SimulateCardBody,
   type CreateCardBody,
   type CreateAccountBody,
+  type CreateBillBody,
+  type CreateBillRule,
   type DueInstancesQuery,
   type PayDueInstanceBody,
 } from './schemas.js';

@@ -38,7 +38,10 @@ export type BillMinAggregateOutputType = {
   id: string | null
   accountId: string | null
   ruleId: string | null
+  name: string | null
   amount: number | null
+  currency: string | null
+  deletedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -47,7 +50,10 @@ export type BillMaxAggregateOutputType = {
   id: string | null
   accountId: string | null
   ruleId: string | null
+  name: string | null
   amount: number | null
+  currency: string | null
+  deletedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -56,7 +62,10 @@ export type BillCountAggregateOutputType = {
   id: number
   accountId: number
   ruleId: number
+  name: number
   amount: number
+  currency: number
+  deletedAt: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -75,7 +84,10 @@ export type BillMinAggregateInputType = {
   id?: true
   accountId?: true
   ruleId?: true
+  name?: true
   amount?: true
+  currency?: true
+  deletedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -84,7 +96,10 @@ export type BillMaxAggregateInputType = {
   id?: true
   accountId?: true
   ruleId?: true
+  name?: true
   amount?: true
+  currency?: true
+  deletedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -93,7 +108,10 @@ export type BillCountAggregateInputType = {
   id?: true
   accountId?: true
   ruleId?: true
+  name?: true
   amount?: true
+  currency?: true
+  deletedAt?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -189,7 +207,10 @@ export type BillGroupByOutputType = {
   id: string
   accountId: string
   ruleId: string
+  name: string
   amount: number | null
+  currency: string
+  deletedAt: Date | null
   createdAt: Date
   updatedAt: Date
   _count: BillCountAggregateOutputType | null
@@ -221,7 +242,10 @@ export type BillWhereInput = {
   id?: Prisma.StringFilter<"Bill"> | string
   accountId?: Prisma.StringFilter<"Bill"> | string
   ruleId?: Prisma.StringFilter<"Bill"> | string
+  name?: Prisma.StringFilter<"Bill"> | string
   amount?: Prisma.FloatNullableFilter<"Bill"> | number | null
+  currency?: Prisma.StringFilter<"Bill"> | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Bill"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Bill"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Bill"> | Date | string
   account?: Prisma.XOR<Prisma.AccountScalarRelationFilter, Prisma.AccountWhereInput>
@@ -233,7 +257,10 @@ export type BillOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   accountId?: Prisma.SortOrder
   ruleId?: Prisma.SortOrder
+  name?: Prisma.SortOrder
   amount?: Prisma.SortOrderInput | Prisma.SortOrder
+  currency?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   account?: Prisma.AccountOrderByWithRelationInput
@@ -249,7 +276,10 @@ export type BillWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.BillWhereInput | Prisma.BillWhereInput[]
   accountId?: Prisma.StringFilter<"Bill"> | string
   ruleId?: Prisma.StringFilter<"Bill"> | string
+  name?: Prisma.StringFilter<"Bill"> | string
   amount?: Prisma.FloatNullableFilter<"Bill"> | number | null
+  currency?: Prisma.StringFilter<"Bill"> | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Bill"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Bill"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Bill"> | Date | string
   account?: Prisma.XOR<Prisma.AccountScalarRelationFilter, Prisma.AccountWhereInput>
@@ -261,7 +291,10 @@ export type BillOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   accountId?: Prisma.SortOrder
   ruleId?: Prisma.SortOrder
+  name?: Prisma.SortOrder
   amount?: Prisma.SortOrderInput | Prisma.SortOrder
+  currency?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.BillCountOrderByAggregateInput
@@ -278,14 +311,20 @@ export type BillScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Bill"> | string
   accountId?: Prisma.StringWithAggregatesFilter<"Bill"> | string
   ruleId?: Prisma.StringWithAggregatesFilter<"Bill"> | string
+  name?: Prisma.StringWithAggregatesFilter<"Bill"> | string
   amount?: Prisma.FloatNullableWithAggregatesFilter<"Bill"> | number | null
+  currency?: Prisma.StringWithAggregatesFilter<"Bill"> | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Bill"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Bill"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Bill"> | Date | string
 }
 
 export type BillCreateInput = {
   id?: string
+  name: string
   amount?: number | null
+  currency?: string
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   account: Prisma.AccountCreateNestedOneWithoutBillsInput
@@ -297,7 +336,10 @@ export type BillUncheckedCreateInput = {
   id?: string
   accountId: string
   ruleId: string
+  name: string
   amount?: number | null
+  currency?: string
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   dueInstances?: Prisma.DueInstanceUncheckedCreateNestedManyWithoutBillInput
@@ -305,7 +347,10 @@ export type BillUncheckedCreateInput = {
 
 export type BillUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   account?: Prisma.AccountUpdateOneRequiredWithoutBillsNestedInput
@@ -317,7 +362,10 @@ export type BillUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   accountId?: Prisma.StringFieldUpdateOperationsInput | string
   ruleId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueInstances?: Prisma.DueInstanceUncheckedUpdateManyWithoutBillNestedInput
@@ -327,14 +375,20 @@ export type BillCreateManyInput = {
   id?: string
   accountId: string
   ruleId: string
+  name: string
   amount?: number | null
+  currency?: string
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type BillUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -343,7 +397,10 @@ export type BillUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   accountId?: Prisma.StringFieldUpdateOperationsInput | string
   ruleId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -367,7 +424,10 @@ export type BillCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   accountId?: Prisma.SortOrder
   ruleId?: Prisma.SortOrder
+  name?: Prisma.SortOrder
   amount?: Prisma.SortOrder
+  currency?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -380,7 +440,10 @@ export type BillMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   accountId?: Prisma.SortOrder
   ruleId?: Prisma.SortOrder
+  name?: Prisma.SortOrder
   amount?: Prisma.SortOrder
+  currency?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -389,7 +452,10 @@ export type BillMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   accountId?: Prisma.SortOrder
   ruleId?: Prisma.SortOrder
+  name?: Prisma.SortOrder
   amount?: Prisma.SortOrder
+  currency?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -495,6 +561,10 @@ export type NullableFloatFieldUpdateOperationsInput = {
   divide?: number
 }
 
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
+}
+
 export type BillCreateNestedOneWithoutDueInstancesInput = {
   create?: Prisma.XOR<Prisma.BillCreateWithoutDueInstancesInput, Prisma.BillUncheckedCreateWithoutDueInstancesInput>
   connectOrCreate?: Prisma.BillCreateOrConnectWithoutDueInstancesInput
@@ -511,7 +581,10 @@ export type BillUpdateOneRequiredWithoutDueInstancesNestedInput = {
 
 export type BillCreateWithoutAccountInput = {
   id?: string
+  name: string
   amount?: number | null
+  currency?: string
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   rule: Prisma.RuleCreateNestedOneWithoutBillsInput
@@ -521,7 +594,10 @@ export type BillCreateWithoutAccountInput = {
 export type BillUncheckedCreateWithoutAccountInput = {
   id?: string
   ruleId: string
+  name: string
   amount?: number | null
+  currency?: string
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   dueInstances?: Prisma.DueInstanceUncheckedCreateNestedManyWithoutBillInput
@@ -559,14 +635,20 @@ export type BillScalarWhereInput = {
   id?: Prisma.StringFilter<"Bill"> | string
   accountId?: Prisma.StringFilter<"Bill"> | string
   ruleId?: Prisma.StringFilter<"Bill"> | string
+  name?: Prisma.StringFilter<"Bill"> | string
   amount?: Prisma.FloatNullableFilter<"Bill"> | number | null
+  currency?: Prisma.StringFilter<"Bill"> | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Bill"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Bill"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Bill"> | Date | string
 }
 
 export type BillCreateWithoutRuleInput = {
   id?: string
+  name: string
   amount?: number | null
+  currency?: string
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   account: Prisma.AccountCreateNestedOneWithoutBillsInput
@@ -576,7 +658,10 @@ export type BillCreateWithoutRuleInput = {
 export type BillUncheckedCreateWithoutRuleInput = {
   id?: string
   accountId: string
+  name: string
   amount?: number | null
+  currency?: string
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   dueInstances?: Prisma.DueInstanceUncheckedCreateNestedManyWithoutBillInput
@@ -609,7 +694,10 @@ export type BillUpdateManyWithWhereWithoutRuleInput = {
 
 export type BillCreateWithoutDueInstancesInput = {
   id?: string
+  name: string
   amount?: number | null
+  currency?: string
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   account: Prisma.AccountCreateNestedOneWithoutBillsInput
@@ -620,7 +708,10 @@ export type BillUncheckedCreateWithoutDueInstancesInput = {
   id?: string
   accountId: string
   ruleId: string
+  name: string
   amount?: number | null
+  currency?: string
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -643,7 +734,10 @@ export type BillUpdateToOneWithWhereWithoutDueInstancesInput = {
 
 export type BillUpdateWithoutDueInstancesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   account?: Prisma.AccountUpdateOneRequiredWithoutBillsNestedInput
@@ -654,7 +748,10 @@ export type BillUncheckedUpdateWithoutDueInstancesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   accountId?: Prisma.StringFieldUpdateOperationsInput | string
   ruleId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -662,14 +759,20 @@ export type BillUncheckedUpdateWithoutDueInstancesInput = {
 export type BillCreateManyAccountInput = {
   id?: string
   ruleId: string
+  name: string
   amount?: number | null
+  currency?: string
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type BillUpdateWithoutAccountInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   rule?: Prisma.RuleUpdateOneRequiredWithoutBillsNestedInput
@@ -679,7 +782,10 @@ export type BillUpdateWithoutAccountInput = {
 export type BillUncheckedUpdateWithoutAccountInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   ruleId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueInstances?: Prisma.DueInstanceUncheckedUpdateManyWithoutBillNestedInput
@@ -688,7 +794,10 @@ export type BillUncheckedUpdateWithoutAccountInput = {
 export type BillUncheckedUpdateManyWithoutAccountInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   ruleId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -696,14 +805,20 @@ export type BillUncheckedUpdateManyWithoutAccountInput = {
 export type BillCreateManyRuleInput = {
   id?: string
   accountId: string
+  name: string
   amount?: number | null
+  currency?: string
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type BillUpdateWithoutRuleInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   account?: Prisma.AccountUpdateOneRequiredWithoutBillsNestedInput
@@ -713,7 +828,10 @@ export type BillUpdateWithoutRuleInput = {
 export type BillUncheckedUpdateWithoutRuleInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   accountId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueInstances?: Prisma.DueInstanceUncheckedUpdateManyWithoutBillNestedInput
@@ -722,7 +840,10 @@ export type BillUncheckedUpdateWithoutRuleInput = {
 export type BillUncheckedUpdateManyWithoutRuleInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   accountId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -762,7 +883,10 @@ export type BillSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   id?: boolean
   accountId?: boolean
   ruleId?: boolean
+  name?: boolean
   amount?: boolean
+  currency?: boolean
+  deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   account?: boolean | Prisma.AccountDefaultArgs<ExtArgs>
@@ -775,7 +899,10 @@ export type BillSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   id?: boolean
   accountId?: boolean
   ruleId?: boolean
+  name?: boolean
   amount?: boolean
+  currency?: boolean
+  deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   account?: boolean | Prisma.AccountDefaultArgs<ExtArgs>
@@ -786,7 +913,10 @@ export type BillSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   id?: boolean
   accountId?: boolean
   ruleId?: boolean
+  name?: boolean
   amount?: boolean
+  currency?: boolean
+  deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   account?: boolean | Prisma.AccountDefaultArgs<ExtArgs>
@@ -797,12 +927,15 @@ export type BillSelectScalar = {
   id?: boolean
   accountId?: boolean
   ruleId?: boolean
+  name?: boolean
   amount?: boolean
+  currency?: boolean
+  deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type BillOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "accountId" | "ruleId" | "amount" | "createdAt" | "updatedAt", ExtArgs["result"]["bill"]>
+export type BillOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "accountId" | "ruleId" | "name" | "amount" | "currency" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["bill"]>
 export type BillInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   account?: boolean | Prisma.AccountDefaultArgs<ExtArgs>
   rule?: boolean | Prisma.RuleDefaultArgs<ExtArgs>
@@ -829,7 +962,10 @@ export type $BillPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     id: string
     accountId: string
     ruleId: string
+    name: string
     amount: number | null
+    currency: string
+    deletedAt: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["bill"]>
@@ -1261,7 +1397,10 @@ export interface BillFieldRefs {
   readonly id: Prisma.FieldRef<"Bill", 'String'>
   readonly accountId: Prisma.FieldRef<"Bill", 'String'>
   readonly ruleId: Prisma.FieldRef<"Bill", 'String'>
+  readonly name: Prisma.FieldRef<"Bill", 'String'>
   readonly amount: Prisma.FieldRef<"Bill", 'Float'>
+  readonly currency: Prisma.FieldRef<"Bill", 'String'>
+  readonly deletedAt: Prisma.FieldRef<"Bill", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Bill", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Bill", 'DateTime'>
 }
