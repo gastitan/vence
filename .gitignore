@@ -36,6 +36,10 @@ coverage/
 .cache/
 .eslintcache
 
-# SQLite DBs (dev and test)
-dueflow.db
-test.db
+# SQLite databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Local data
+/data/
