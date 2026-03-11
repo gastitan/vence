@@ -90,6 +90,8 @@ Used for purchases or loans paid in monthly installments.
   * Use the last day of the month
   * Mark as estimated
 
+**Implementation status:** Specified for future implementation; the engine currently implements only Fixed Day and Range Rule.
+
 ---
 
 ## Confidence Score
@@ -97,8 +99,8 @@ Used for purchases or loans paid in monthly installments.
 * Initial confidence depends on rule type:
 
   * Fixed Day: 1.0
-  * Range Rule: 0.9
-  * Installments: 1.0
+  * Range Rule: 0.8–1 (0.8 when date clamped, 0.9 when weekday-adjusted, 1 when exact)
+  * Installments: 1.0 (when implemented)
 * Manual corrections decrease confidence
 * Repeated confirmations increase confidence
 

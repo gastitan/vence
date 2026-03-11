@@ -35,7 +35,7 @@ Vence follows a **backend-first, client-agnostic architecture**.
 - Deterministic calculations
 - No side effects
 - No persistence
-- Fully documented in `RULES.md`
+- Rule types and behavior are documented in `RULES.md`. The engine currently implements **Fixed Day** and **Range Rule** (Credit Card); Installments Rule is specified in `RULES.md` for future implementation.
 
 ```ts
 calculateNextDueDate({ rule, referenceDate }) → CalculationResult
@@ -65,19 +65,22 @@ The app uses **Prisma ORM** with SQLite by default. The schema is written to sta
    ```
    For a fresh database, the first migration will create all tables. Connection URL is read from `prisma.config.ts` (which uses `dotenv`), so ensure `.env` is present when running Prisma CLI.
 
-4. **Production**  
+4. **Inspect data (Prisma Studio)**  
+   Run `npx prisma studio` to open a web UI at http://localhost:5555 where you can view and edit data in the browser.
+
+5. **Production**  
    To apply migrations in production (e.g. CI or deploy):
    ```bash
    npx prisma migrate deploy
    ```
    Ensure `DATABASE_URL` is set in the environment.
 
-5. **DueInstance migration (Phase 2.5)**  
+6. **DueInstance migration (Phase 2.5)**  
    Migration `20260224120000_add_due_instance_and_bill_amount` adds the `DueInstance` model and an optional `amount` column on `Bill`. Apply it with:
    ```bash
    npx prisma migrate deploy
    ```
    If you see "Drift detected" (e.g. DB has tables not in migration history), either fix the DB to match migrations or run `npx prisma migrate reset` (drops all data) then re-apply.
 
-6. **Test database**  
+7. **Test database**  
    Tests use a separate SQLite DB: `file:./test.db`. Run tests with `npm test`; the test script applies migrations to `test.db` then runs Vitest, so the schema is always in sync. Do not mix dev (`dueflow.db`) and test (`test.db`) databases.

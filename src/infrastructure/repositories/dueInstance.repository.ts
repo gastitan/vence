@@ -97,6 +97,39 @@ export async function findNextPending(): Promise<DueInstance | null> {
   return row ? toDomain(row) : null;
 }
 
+type DueInstanceWithBillAndAccountRow = {
+  id: string;
+  dueDate: Date;
+  estimatedAmount: number | null;
+  confirmedAmount: number | null;
+  status: string;
+  bill: {
+    id: string;
+    name: string;
+    currency: string;
+    account: { id: string; name: string; type: string };
+  };
+};
+
+/** Same as findNextPending but includes bill and account for API (same DTO as list endpoint). */
+export async function findNextPendingWithBillAndAccount(): Promise<DueInstanceWithBillAndAccountRow | null> {
+  const client = getPrismaClient(undefined);
+  const row = await client.dueInstance.findFirst({
+    where: { status: PrismaDueStatus.PENDING },
+    orderBy: { dueDate: 'asc' },
+    include: betweenDatesInclude,
+  });
+  return row as DueInstanceWithBillAndAccountRow | null;
+}
+
+const betweenDatesInclude = {
+  bill: {
+    include: {
+      account: true,
+    },
+  },
+} as const;
+
 export async function findBetweenDates(
   start: Date,
   end: Date
@@ -109,6 +142,59 @@ export async function findBetweenDates(
     orderBy: { dueDate: 'asc' },
   });
   return rows.map(toDomain);
+}
+
+/**
+ * Same as findBetweenDates but includes bill and account for API projection.
+ * Keeps the same date range filter and order.
+ */
+export async function findBetweenDatesWithBillAndAccount(
+  start: Date,
+  end: Date
+): Promise<
+  Array<{
+    id: string;
+    dueDate: Date;
+    estimatedAmount: number | null;
+    confirmedAmount: number | null;
+    status: string;
+    bill: {
+      id: string;
+      name: string;
+      currency: string;
+      account: {
+        id: string;
+        name: string;
+        type: string;
+      };
+    };
+  }>
+> {
+  const client = getPrismaClient(undefined);
+  const rows = await client.dueInstance.findMany({
+    where: {
+      dueDate: { gte: start, lte: end },
+    },
+    orderBy: { dueDate: 'asc' },
+    include: betweenDatesInclude,
+  });
+  return rows as Array<{
+    id: string;
+    dueDate: Date;
+    estimatedAmount: number | null;
+    confirmedAmount: number | null;
+    status: string;
+    bill: {
+      id: string;
+      name: string;
+      currency: string;
+      account: {
+        id: string;
+        name: string;
+        type: string;
+      };
+    };
+  }>;
 }
 
 export async function findLastDueDateByBillId(

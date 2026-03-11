@@ -2,14 +2,15 @@ import type { Request, Response } from 'express';
 import * as dueInstanceService from '../../../services/dueInstance.service.js';
 import { DueInstancesQuerySchema } from '../../../validation/index.js';
 import { parseISODateLocal } from '../../../utils/dateUtils.js';
+import { toDueInstanceDTO } from '../dto/DueInstanceDTO.js';
 
 export async function getNextPendingHandler(_req: Request, res: Response): Promise<void> {
-  const instance = await dueInstanceService.getNextPending();
+  const instance = await dueInstanceService.getNextPendingWithBillAndAccount();
   if (!instance) {
     res.status(404).json({ error: { code: 'NOT_FOUND', message: 'No pending due instance' } });
     return;
   }
-  res.json(serializeDueInstance(instance));
+  res.json(toDueInstanceDTO(instance));
 }
 
 export async function getBetweenDatesHandler(req: Request, res: Response): Promise<void> {
@@ -33,8 +34,8 @@ export async function getBetweenDatesHandler(req: Request, res: Response): Promi
     });
     return;
   }
-  const instances = await dueInstanceService.getBetweenDates(fromDate, toDate);
-  res.json(instances.map(serializeDueInstance));
+  const instances = await dueInstanceService.getBetweenDatesWithBillAndAccount(fromDate, toDate);
+  res.json(instances.map(toDueInstanceDTO));
 }
 
 export async function payHandler(req: Request, res: Response): Promise<void> {
